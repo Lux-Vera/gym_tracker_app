@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../colors.dart';
 
 class Exercise {
   final String name;
@@ -35,19 +36,26 @@ class Workout {
 class WorkoutListItem extends StatelessWidget {
   final Workout workout;
 
-  const WorkoutListItem({required Key key, required this.workout})
-      : super(key: key);
+  const WorkoutListItem({Key? key, required this.workout}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(50),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        child: ListTile(
-          title: Text(workout.title),
-          tileColor: Colors.grey[200],
-          contentPadding: EdgeInsets.all(10),
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(new MaterialPageRoute(
+          builder: (BuildContext context) => new WorkoutPage(
+                workout: workout,
+              ))), //your login class name,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(50.0),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          child: ListTile(
+            title: Text(workout.title),
+            subtitle: Text("sub"),
+            textColor: accentBlue,
+            tileColor: white,
+            contentPadding: EdgeInsets.all(10),
+          ),
         ),
       ),
     );
@@ -56,8 +64,7 @@ class WorkoutListItem extends StatelessWidget {
 
 class WorkoutPage extends StatelessWidget {
   final Workout workout;
-  const WorkoutPage({required Key key, required this.workout})
-      : super(key: key);
+  const WorkoutPage({Key? key, required this.workout}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
