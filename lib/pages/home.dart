@@ -33,10 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _addWorkout() {
     setState(() {
-      DateTime now = DateTime.now();
       _workoutList.add(Workout(
-          'Workout - ${now.year.toString()}/${now.month.toString()}/${now.day.toString()}',
-          DateTime.now(), [])); // Replace with user input
+          'Workout name', DateTime.now(), [])); // Replace with user input
     });
   }
 
@@ -63,23 +61,18 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Center(
-        child: ListView.builder(
+        child: ListView.separated(
+          physics: BouncingScrollPhysics(),
+          shrinkWrap: true,
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           itemCount: _workoutList.length,
           itemBuilder: (context, index) {
             final workout = _workoutList[index];
-            return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => WorkoutPage(
-                          key: Key(workout.title), workout: workout),
-                    ),
-                  );
-                },
-                child:
-                    WorkoutListItem(key: Key(workout.title), workout: workout));
+            return WorkoutListItem(key: Key(workout.title), workout: workout);
           },
+          separatorBuilder: (context, index) => SizedBox(
+            height: 6,
+          ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
