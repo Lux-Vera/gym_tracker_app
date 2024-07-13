@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const Color lightBlue = Color(0xFFEDF2FB);
+const Color disabledBlue = Color(0xFFABC4FF);
 const Color accentBlue = Color(0xFF5286FF);
 const Color white = Color(0xFFFFFFFF);
 const Color accentOrange = Color(0xFFFC9E4F);

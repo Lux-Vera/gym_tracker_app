@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'workout.dart';
+import '../models/exercise.dart';
 
 class MyExercisesPage extends StatefulWidget {
   MyExercisesPage({Key? key}) : super(key: key);
