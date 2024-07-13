@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'workout.dart';
-import '../colors.dart';
+import '../theme.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key}) : super(key: key);
