@@ -11,21 +11,24 @@ class BottomNavBar extends StatelessWidget {
     return BottomAppBar(
       notchMargin: 16.0,
       shape: const CircularNotchedRectangle(),
-      color: lightBlue,
       child: Row(
         mainAxisSize:
             MainAxisSize.max, // Stretch the Row across the entire width
         mainAxisAlignment:
             MainAxisAlignment.spaceEvenly, // Evenly distribute icons
         children: [
-          BottomIconButton(Icon(Icons.fitness_center),
-              focus: focusButtonIndex == 0),
-          BottomIconButton(Icon(Icons.dynamic_feed),
-              focus: focusButtonIndex == 1),
-          BottomIconButton(Icon(Icons.query_stats),
-              focus: focusButtonIndex == 2),
-          BottomIconButton(Icon(Icons.account_circle),
-              focus: focusButtonIndex == 3),
+          BottomIconButton(Icon(Icons.fitness_center), "Workouts",
+                  focus: focusButtonIndex == 0)
+              .build(context),
+          BottomIconButton(Icon(Icons.dynamic_feed), "Exercises",
+                  focus: focusButtonIndex == 1)
+              .build(context),
+          BottomIconButton(Icon(Icons.query_stats), "Stats",
+                  focus: focusButtonIndex == 2)
+              .build(context),
+          BottomIconButton(Icon(Icons.account_circle), "Profile",
+                  focus: focusButtonIndex == 3)
+              .build(context),
           Spacer(),
         ],
       ),
@@ -33,18 +36,21 @@ class BottomNavBar extends StatelessWidget {
   }
 }
 
-class BottomIconButton extends StatelessWidget {
+class BottomIconButton extends State<StatefulWidget> {
   final Icon icon;
   final bool focus;
+  final String tooltip;
 
-  BottomIconButton(this.icon, {this.focus = false});
+  BottomIconButton(this.icon, this.tooltip, {this.focus = false});
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       icon: icon,
+      tooltip: tooltip,
       iconSize: 32,
       color: focus ? accentOrange : accentBlue,
+      mouseCursor: SystemMouseCursors.click,
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       onPressed: () => {},
     );
