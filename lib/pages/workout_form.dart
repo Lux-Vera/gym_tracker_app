@@ -11,12 +11,15 @@ class WorkoutForm extends StatefulWidget {
   const WorkoutForm({super.key, required this.workout});
 
   @override
-  State<WorkoutForm> createState() => _WorkoutFormState();
+  State<WorkoutForm> createState() => _WorkoutFormState(workout.dateTime);
 }
 
 // Define a corresponding State class.
 // This class holds the data related to the Form.
 class _WorkoutFormState extends State<WorkoutForm> {
+  Feeling? workoutFeeling;
+  DateTime pickedDate;
+  _WorkoutFormState(this.pickedDate);
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
   final workoutTitleController = TextEditingController();
@@ -24,13 +27,27 @@ class _WorkoutFormState extends State<WorkoutForm> {
   String testNotes =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque a leo ut turpis tristique cursus vitae eu lacus. Sed quis mauris suscipit, feugiat leo et, feugiat velit. ";
 
-  Feeling? workoutFeeling;
-
   void setWorkoutFeeling(Feeling? feeling) {
     // This approch makes sure workout isn't altered unless saved
     setState(() {
       workoutFeeling = feeling;
     });
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: pickedDate,
+      currentDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(DateTime.now().year + 1),
+    );
+
+    if (picked != null && picked != pickedDate) {
+      setState(() {
+        pickedDate = picked;
+      });
+    }
   }
 
   List<bool> _selectedButton = [false, false, false, false];
@@ -61,17 +78,18 @@ class _WorkoutFormState extends State<WorkoutForm> {
                 cursorColor: accentBlue,
                 decoration: const InputDecoration(
                     focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: accentOrange)),
+                        borderSide: BorderSide(color: accentBlue)),
                     labelText: 'Workout name',
-                    floatingLabelStyle: TextStyle(color: accentOrange)),
+                    floatingLabelStyle: TextStyle(color: accentBlue)),
               ),
               SizedBox(
                 height: 16,
               ),
               Row(children: [
                 OutlinedButton(
-                    onPressed: () => {},
-                    child: Text('${widget.workout.getDateString()}')),
+                    onPressed: () => {_selectDate(context)},
+                    child: Text(
+                        '${pickedDate.year}/${pickedDate.month}/${pickedDate.day}')),
                 SizedBox(
                   width: 16,
                 ),
@@ -118,6 +136,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
                                 ? null
                                 : workoutNotesController.text,
                         widget.workout.feeling = workoutFeeling,
+                        widget.workout.dateTime = pickedDate,
                         Navigator.of(context).push(
                           new MaterialPageRoute(
                             builder: (BuildContext context) => new WorkoutPage(

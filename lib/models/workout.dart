@@ -6,10 +6,10 @@ class Workout {
   String title;
   String? notes;
   Feeling? feeling;
-  final DateTime dateTime;
-  final int? durationMinutes;
-  final IconData icon;
-  final List<ExerciseEntry> exercises;
+  DateTime dateTime;
+  int? durationMinutes;
+  IconData icon;
+  List<ExerciseEntry> exercises;
 
   Workout(this.title, this.dateTime, this.exercises,
       {this.durationMinutes,
