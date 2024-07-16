@@ -7,12 +7,12 @@ class Workout {
   String? notes;
   Feeling? feeling;
   DateTime dateTime;
-  int? durationMinutes;
+  Duration? duration;
   IconData icon;
   List<ExerciseEntry> exercises;
 
   Workout(this.title, this.dateTime, this.exercises,
-      {this.durationMinutes,
+      {this.duration,
       this.icon = Icons.directions_run,
       this.notes,
       this.feeling});
@@ -22,14 +22,14 @@ class Workout {
   }
 
   String getDurationString() {
-    if (durationMinutes != null) {
-      return '$durationMinutes min';
+    if (duration != null) {
+      return '${duration!.inHours}h ${duration!.inMinutes % 60}min';
     } else
       return '';
   }
 
   String dateAndDuration() {
-    if (durationMinutes != null) {
+    if (duration != null) {
       return '${getDateString()} - ${getDurationString()}';
     } else
       return getDateString();

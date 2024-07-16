@@ -5,13 +5,15 @@ import 'package:gym_tracker_app/widgets/one-choice-toggle-buttons.dart';
 import '../models/workout.dart';
 import '../enums/feeling.dart';
 import '../widgets/feeling-button.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 class WorkoutForm extends StatefulWidget {
   final Workout workout;
   const WorkoutForm({super.key, required this.workout});
 
   @override
-  State<WorkoutForm> createState() => _WorkoutFormState(workout.dateTime);
+  State<WorkoutForm> createState() =>
+      _WorkoutFormState(workout.dateTime, workout.duration, workout.icon);
 }
 
 // Define a corresponding State class.
@@ -19,19 +21,96 @@ class WorkoutForm extends StatefulWidget {
 class _WorkoutFormState extends State<WorkoutForm> {
   Feeling? workoutFeeling;
   DateTime pickedDate;
-  _WorkoutFormState(this.pickedDate);
-  // Create a text controller and use it to retrieve the current value
-  // of the TextField.
+  Duration? _duration;
+  IconData _icon;
+
   final workoutTitleController = TextEditingController();
   final workoutNotesController = TextEditingController();
-  String testNotes =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque a leo ut turpis tristique cursus vitae eu lacus. Sed quis mauris suscipit, feugiat leo et, feugiat velit. ";
+
+  _WorkoutFormState(this.pickedDate, this._duration, this._icon);
+
+  List<bool> _selectedButtons = [false, false, false, false];
+  List<IconData> workoutIcons = [
+    Icons.directions_run,
+    Icons.directions_bike,
+    Icons.directions_walk,
+    Icons.fitness_center,
+    Icons.sports_soccer,
+    Icons.pool,
+    Icons.star,
+    Icons.sports_tennis,
+    Icons.sports_gymnastics,
+    Icons.sports_kabaddi,
+    Icons.nordic_walking,
+  ];
 
   void setWorkoutFeeling(Feeling? feeling) {
     // This approch makes sure workout isn't altered unless saved
     setState(() {
       workoutFeeling = feeling;
     });
+  }
+
+  void setDuration(Picker picker, List<int> value) {
+    setState(() {
+      _duration = Duration(
+          hours: picker.getSelectedValues()[0],
+          minutes: picker.getSelectedValues()[1]);
+    });
+  }
+
+  Widget iconPickerDialog(BuildContext context) {
+    IconData picked = _icon;
+
+    return StatefulBuilder(builder: ((context, setState) {
+      return AlertDialog(
+        title: Text('Select icon'),
+        content: Container(
+          width: 32 * 4 + 16,
+          height: 32 * 6,
+          child: GridView.count(
+            crossAxisCount: 4,
+            children: workoutIcons
+                .map((icon) => IconButton(
+                      onPressed: () => setState(() {
+                        picked = icon;
+                      }),
+                      icon: Icon(icon),
+                      color: picked == icon ? accentOrange : accentBlue,
+                    ))
+                .toList(),
+          ),
+        ),
+        backgroundColor: lightBlue,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(picked);
+              // TODO: Add functionality for the "OK" button
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    }));
+  }
+
+  Future<void> _selectIcon(BuildContext context) async {
+    final IconData? picked =
+        await showDialog(context: context, builder: iconPickerDialog);
+
+    print(picked);
+    if (picked != null && picked != _icon) {
+      setState(() {
+        _icon = picked;
+      });
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -49,8 +128,6 @@ class _WorkoutFormState extends State<WorkoutForm> {
       });
     }
   }
-
-  List<bool> _selectedButton = [false, false, false, false];
 
   @override
   void dispose() {
@@ -94,9 +171,63 @@ class _WorkoutFormState extends State<WorkoutForm> {
                   width: 16,
                 ),
                 OutlinedButton(
-                    onPressed: () => {},
-                    child: Text(
-                        '${widget.workout.durationMinutes == null ? 'add duration' : widget.workout.getDurationString()}'))
+                  onPressed: () => {
+                    Picker(
+                      adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
+                        NumberPickerColumn(
+                            initValue:
+                                _duration != null ? _duration!.inHours : 0,
+                            begin: 0,
+                            end: 23,
+                            suffix: Text(' hours')),
+                        NumberPickerColumn(
+                            initValue: _duration != null
+                                ? _duration!.inMinutes % 60
+                                : 0,
+                            begin: 0,
+                            end: 60,
+                            suffix: Text(' minutes'),
+                            jump: 1),
+                      ]),
+                      delimiter: <PickerDelimiter>[
+                        PickerDelimiter(
+                          child: Container(
+                            width: 30.0,
+                            alignment: Alignment.center,
+                            child: Text(
+                              ':',
+                              style: TextStyle(
+                                  color: accentBlue,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        )
+                      ],
+                      hideHeader: true,
+                      textStyle: TextStyle(
+                          color: accentBlue, fontFamily: 'Lato', fontSize: 16),
+                      cancelTextStyle: TextStyle(
+                          color: accentBlue, fontFamily: 'Lato', fontSize: 16),
+                      confirmText: 'Set',
+                      confirmTextStyle: TextStyle(
+                          color: accentBlue, fontFamily: 'Lato', fontSize: 16),
+                      title: const Text(
+                        'Select duration',
+                        style: TextStyle(
+                            color: accentBlue,
+                            fontFamily: 'Lato',
+                            fontWeight: FontWeight.bold),
+                      ),
+                      selectedTextStyle: TextStyle(color: Colors.blue),
+                      onConfirm: setDuration,
+                    ).showDialog(context)
+                  },
+                  child: Text(
+                      '${_duration == null ? 'add duration' : '${_duration!.inHours}h ${_duration!.inMinutes % 60}min'}'),
+                ),
+                IconButton(
+                    onPressed: () => _selectIcon(context), icon: Icon(_icon))
               ]),
               SizedBox(
                 height: 16,
@@ -118,7 +249,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
                           feeling: key,
                         ))
                     .toList(),
-                selectedButtons: _selectedButton,
+                selectedButtons: _selectedButtons,
                 action: setWorkoutFeeling,
                 indexedValue: feelingsMap.keys.toList(),
               ),
@@ -137,6 +268,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
                                 : workoutNotesController.text,
                         widget.workout.feeling = workoutFeeling,
                         widget.workout.dateTime = pickedDate,
+                        widget.workout.duration = _duration,
                         Navigator.of(context).push(
                           new MaterialPageRoute(
                             builder: (BuildContext context) => new WorkoutPage(

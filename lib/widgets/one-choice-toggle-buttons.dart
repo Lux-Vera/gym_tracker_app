@@ -35,6 +35,7 @@ class _OneChoiceToggleButtonsState extends State<OneChoiceToggleButtons> {
       fillColor: accentBlue,
       color: accentBlue,
       onPressed: (int index) {
+        print(index);
         setState(() {
           widget.action!(widget.selectedButtons[index]
               ? null
