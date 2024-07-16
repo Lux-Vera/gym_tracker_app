@@ -43,5 +43,5 @@ A new Flutter project aiming tro create a gym tracker app.
 
 ## Useful resources
 
-Figma style project: [online](https://www.figma.com/design/GhKSjuXSN8T4NgYQ7RDnpd/gym_tracker_app?node-id=0-1&t=fKUfm5YFsVZUDT3P-0)
-Flutter documentation: [online documentation](https://flutter.dev/docs)
+- [Figma project](https://www.figma.com/design/GhKSjuXSN8T4NgYQ7RDnpd/gym_tracker_app?node-id=0-1&t=fKUfm5YFsVZUDT3P-0)
+- [Flutter documentation](https://flutter.dev/docs)
