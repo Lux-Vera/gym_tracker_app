@@ -1,16 +1,47 @@
 # gym_tracker_app
 
-A new Flutter project.
+A new Flutter project aiming tro create a gym tracker app.
 
-## Getting Started
+## To Do
 
-This project is a starting point for a Flutter application.
+- [x] Workout list functionality
+- [] Filter workout list
+- [] Sort workout list
+- [] Exercise list functionality
+- [] Filter exercise list
+- [] Sort exercise list
+- [] Add Exercis functionality
+  - [] Set exercise name
+  - [] Set exercise type
+  - [] Set exercise goal
+  - [] Set exercise PB
+  - [] Set exercise target
+- [] Add workout functionality
+  - [x] Set workout name
+  - [x] Set workout date
+  - [x] Set workout duration
+  - [x] Set workout icon
+  - [x] Set workout notes
+  - [x] Set workout feeling
+  - [] Add workout exercise
+  - [] Remove workout exercise
+  - [] Edit workout exercise
+  - [] Delete workout
+  - [] Edit workout
+- [] Workout page functionality
+  - [x] Display date and duration
+  - [x] Display title
+  - [x] Display notes
+  - [x] Display feeling
+  - [] Display Exercises
+- [x] Design main theme
+- [] Design high contrast theme
+- [] Design dark theme
+- [] Implement main theme
+- [] Implement high contrast theme
+- [] Implement dark theme
 
-A few resources to get you started if this is your first Flutter project:
+## Useful resources
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Figma style project: [online](https://www.figma.com/design/GhKSjuXSN8T4NgYQ7RDnpd/gym_tracker_app?node-id=0-1&t=fKUfm5YFsVZUDT3P-0)
+Flutter documentation: [online documentation](https://flutter.dev/docs)

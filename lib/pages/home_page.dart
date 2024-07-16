@@ -26,12 +26,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // void _addWorkout() {
-  //   setState(() {
-  //     _workoutList.add(Workout(
-  //         'Workout name', DateTime.now(), [])); // TODO: Replace with user input
-  //   });
-  // }
+  void _addWorkout() {
+    setState(() {
+      _workoutList.add(Workout(
+          'Workout name', DateTime.now(), [])); // TODO: Replace with user input
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
