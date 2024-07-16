@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/home.dart';
+import 'package:gym_tracker_app/pages/home_page.dart';
 import 'theme.dart';
 
 void main() {
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'Gym Tracker',
       themeMode: ThemeMode.light, //or ThemeMode.dark
       theme: GlobalThemData.lightThemeData,
-      darkTheme: GlobalThemData.darkThemeData,
+      // darkTheme: GlobalThemData.darkThemeData,
       home: MyHomePage(),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/pages/workout_form.dart';
 import '../widgets/workout_list_item.dart';
 import '../models/workout.dart';
 import '../widgets/bottom-nav-bar.dart';
@@ -15,12 +16,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Workout> _workoutList = [];
 
-  void _addWorkout() {
-    setState(() {
-      _workoutList.add(Workout(
-          'Workout name', DateTime.now(), [])); // TODO: Replace with user input
-    });
+  void _createWorkout() {
+    Navigator.of(context).push(
+      new MaterialPageRoute(
+        builder: (BuildContext context) => new WorkoutForm(
+          workout: Workout("Test", DateTime.now(), []),
+        ),
+      ),
+    );
   }
+
+  // void _addWorkout() {
+  //   setState(() {
+  //     _workoutList.add(Workout(
+  //         'Workout name', DateTime.now(), [])); // TODO: Replace with user input
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +39,10 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         toolbarHeight: 80,
         centerTitle: true,
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.filter_alt),
@@ -60,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       bottomNavigationBar: BottomNavBar(focusButtonIndex: 0),
       floatingActionButton:
-          CustomFloatingActionButton(icon: Icons.add, action: _addWorkout),
+          CustomFloatingActionButton(icon: Icons.add, action: _createWorkout),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }

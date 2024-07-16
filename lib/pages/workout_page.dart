@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/enums/feeling.dart';
 import '../theme.dart';
 import '../models/workout.dart';
 import '../widgets/exercise_toggle_list_item.dart';
@@ -30,38 +31,39 @@ class WorkoutPage extends StatelessWidget {
             SizedBox(
               height: 8,
             ),
-            Text(
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque a leo ut turpis tristique cursus vitae eu lacus. Sed quis mauris suscipit, feugiat leo et, feugiat velit. ",
-              style: TextStyle(
-                color: accentBlue,
-                fontSize: 16.0,
+            if (workout.notes != null)
+              Text(
+                workout.notes!,
+                style: TextStyle(
+                  color: accentBlue,
+                  fontSize: 16.0,
+                ),
               ),
-            ),
             SizedBox(
               height: 16,
             ),
             Row(
               children: [
-                Icon(
-                  Icons.sentiment_very_dissatisfied,
-                  color: accentBlue,
-                  size: 32,
-                ),
-                Text(
-                  "Dead",
-                  style: TextStyle(
+                if (workout.feeling != null)
+                  Icon(
+                    feelingsMap[workout.feeling]!.icon,
                     color: accentBlue,
-                    fontSize: 20.0,
+                    size: 32,
                   ),
-                )
+                if (workout.feeling != null)
+                  Text(
+                    feelingsMap[workout.feeling]!.title,
+                    style: TextStyle(
+                      color: accentBlue,
+                      fontSize: 20.0,
+                    ),
+                  )
               ],
             ),
             SizedBox(
               height: 16,
             ),
-            Divider(
-              color: disabledBlue,
-            ),
+            Divider(),
             workout.exercises.isNotEmpty
                 ? ListView.separated(
                     itemBuilder: (context, index) {
