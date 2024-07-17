@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Gym Tracker',
       themeMode: ThemeMode.light, //or ThemeMode.dark
-      theme: GlobalThemData.lightThemeData,
+      theme: GlobalThemeData.lightThemeData,
       // darkTheme: GlobalThemData.darkThemeData,
       home: MyHomePage(),
     );

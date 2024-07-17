@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/enums/feeling.dart';
 import '../theme.dart';
 import '../models/workout.dart';
-import '../widgets/exercise_toggle_list_item.dart';
+import '../widgets/exercise_entry_toggle_display_card.dart';
 
 class WorkoutPage extends StatelessWidget {
   final Workout workout;
@@ -10,6 +10,7 @@ class WorkoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(workout.exercises[0].workoutSets);
     return Scaffold(
       appBar: AppBar(),
       body: Container(
@@ -65,20 +66,18 @@ class WorkoutPage extends StatelessWidget {
             ),
             Divider(),
             workout.exercises.isNotEmpty
-                ? Text("Exercises added! Display feature TODO", //TODO:
-                    style: TextStyle(
-                      color: disabledBlue,
-                      fontSize: 20.0,
-                    ))
-                // ? ListView.separated(
-                //     itemBuilder: (context, index) {
-                //       return ExerciseToggleListItem(
-                //           exerciseEntry: workout.exercises[index]);
-                //     },
-                //     separatorBuilder: (context, index) => SizedBox(
-                //           height: 6,
-                //         ),
-                //     itemCount: workout.exercises.length)
+                ? Column(
+                    children: workout.exercises
+                        .map((entry) => Column(
+                              children: [
+                                ExerciseEntryToggleDisplayCard(
+                                    exerciseEntry: entry),
+                                SizedBox(
+                                  height: 8,
+                                )
+                              ],
+                            ))
+                        .toList())
                 : Text("No exercises added to this workout.",
                     style: TextStyle(
                       color: disabledBlue,

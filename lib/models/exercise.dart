@@ -1,4 +1,5 @@
 import '../enums/feeling.dart';
+import '../models/set.dart';
 
 enum Targets {
   chest,
@@ -24,9 +25,9 @@ class Exercise {
 
 class ExerciseEntry {
   final Exercise exercise;
-  final List<Set> sets;
+  final List<WorkoutSet> workoutSets;
   final Feeling? feeling;
   final String? notes;
 
-  ExerciseEntry(this.exercise, this.sets, {this.feeling, this.notes});
+  ExerciseEntry(this.exercise, this.workoutSets, {this.feeling, this.notes});
 }

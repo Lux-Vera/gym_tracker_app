@@ -6,7 +6,7 @@ const Color accentBlue = Color(0xFF5286FF);
 const Color white = Color(0xFFFFFFFF);
 const Color accentOrange = Color(0xFFFC9E4F);
 
-class GlobalThemData {
+class GlobalThemeData {
   // static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
   // static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
 
@@ -37,6 +37,7 @@ class GlobalThemData {
         scaffoldBackgroundColor: lightBlue,
         bottomAppBarColor: lightBlue,
         disabledColor: disabledBlue,
+        popupMenuTheme: PopupMenuThemeData(textStyle: lightTextStyle),
         dialogTheme: DialogTheme(
             backgroundColor: white,
             titleTextStyle:

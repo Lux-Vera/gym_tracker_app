@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/models/exercise.dart';
 import 'package:gym_tracker_app/pages/workout_page.dart';
 import 'package:gym_tracker_app/theme.dart';
-import 'package:gym_tracker_app/widgets/exercise_list_item.dart';
-import 'package:gym_tracker_app/widgets/exercise_entry_list_item.dart';
+import 'package:gym_tracker_app/widgets/selectable_exercise_list_item.dart';
+import 'package:gym_tracker_app/widgets/exercise_entry_toggle_card.dart';
 import 'package:gym_tracker_app/widgets/one-choice-toggle-buttons.dart';
 import '../models/workout.dart';
 import '../enums/feeling.dart';
@@ -96,9 +96,16 @@ class _WorkoutFormState extends State<WorkoutForm> {
     });
   }
 
-  void _addExercise(ExerciseEntry exercise) {
+  void _addExerciseEntry(ExerciseEntry exercise) {
     setState(() {
       _exerciseList.add(exercise);
+    });
+  }
+
+  void _removeExerciseEntry(ExerciseEntry entry) {
+    setState(() {
+      _exerciseList
+          .removeWhere((e) => identityHashCode(e) == identityHashCode(entry));
     });
   }
 
@@ -170,15 +177,22 @@ class _WorkoutFormState extends State<WorkoutForm> {
           width: MediaQuery.of(context).size.width - 32,
           height: MediaQuery.of(context).size.height - 32,
           child: ListView.separated(
+              physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 Exercise exercise = _dummyExerciseList[index];
-                return ExerciseListItem(
+                final ExerciseEntry entry = ExerciseEntry(exercise, []);
+                return SelectableExerciseListItem(
                     exercise: exercise,
-                    action: () => {
-                          setState(
-                            () => exerciseEntries
-                                .add(ExerciseEntry(exercise, [])),
-                          )
+                    action: (bool isSelected) => {
+                          if (isSelected)
+                            {
+                              setState(
+                                () => exerciseEntries.add(entry),
+                              )
+                            }
+                          else
+                            setState(() => exerciseEntries.removeWhere(
+                                (e) => e.exercise.name == exercise.name))
                         });
               },
               separatorBuilder: ((context, index) => SizedBox(height: 8)),
@@ -196,7 +210,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
             onPressed: () {
               Navigator.of(context).pop(exerciseEntries);
             },
-            child: Text('Select'),
+            child: Text('Add'),
           ),
         ],
       );
@@ -234,7 +248,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
 
     if (exercises != null) {
       exercises.forEach((exercise) {
-        _addExercise(exercise);
+        _addExerciseEntry(exercise);
       });
     }
   }
@@ -256,168 +270,168 @@ class _WorkoutFormState extends State<WorkoutForm> {
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         child: DefaultTextStyle(
-          style: TextStyle(color: accentBlue),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: workoutTitleController,
-                cursorColor: accentBlue,
-                decoration: const InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: accentBlue)),
-                    labelText: 'Workout name',
-                    floatingLabelStyle: TextStyle(color: accentBlue)),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Row(children: [
-                OutlinedButton(
-                    onPressed: () => {_selectDate(context)},
-                    child: Text(
-                        '${_pickedDate.year}/${_pickedDate.month}/${_pickedDate.day}')),
+          style: GlobalThemeData.lightTextStyle,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: workoutTitleController,
+                  cursorColor: accentBlue,
+                  decoration: const InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: accentBlue)),
+                      labelText: 'Workout name',
+                      floatingLabelStyle: TextStyle(color: accentBlue)),
+                ),
                 SizedBox(
-                  width: 16,
+                  height: 16,
+                ),
+                Row(children: [
+                  OutlinedButton(
+                      onPressed: () => {_selectDate(context)},
+                      child: Text(
+                          '${_pickedDate.year}/${_pickedDate.month}/${_pickedDate.day}')),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  OutlinedButton(
+                    onPressed: () => {
+                      Picker(
+                        adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
+                          NumberPickerColumn(
+                              initValue:
+                                  _duration != null ? _duration!.inHours : 0,
+                              begin: 0,
+                              end: 23,
+                              suffix: Text(' hours')),
+                          NumberPickerColumn(
+                              initValue: _duration != null
+                                  ? _duration!.inMinutes % 60
+                                  : 0,
+                              begin: 0,
+                              end: 60,
+                              suffix: Text(' minutes'),
+                              jump: 1),
+                        ]),
+                        delimiter: <PickerDelimiter>[
+                          PickerDelimiter(
+                            child: Container(
+                              width: 30.0,
+                              alignment: Alignment.center,
+                              child: Text(
+                                ':',
+                                style: TextStyle(
+                                    color: accentBlue,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          )
+                        ],
+                        hideHeader: true,
+                        confirmText: 'Set',
+                        title: const Text(
+                          'Select duration',
+                        ),
+                        selectedTextStyle: TextStyle(color: Colors.blue),
+                        onConfirm: _setDuration,
+                      ).showDialog(context)
+                    },
+                    child: Text(
+                        '${_duration == null ? 'add duration' : '${_duration!.inHours}h ${_duration!.inMinutes % 60}min'}'),
+                  ),
+                  IconButton(
+                      onPressed: () => _selectIcon(context), icon: Icon(_icon))
+                ]),
+                SizedBox(
+                  height: 16,
+                ),
+                TextFormField(
+                  controller: workoutNotesController,
+                  cursorColor: accentBlue,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Workout notes',
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                OneChoiceToggleButtons(
+                  buttons: feelingsMap.keys
+                      .map((key) => FeelingButton(
+                            feeling: key,
+                          ))
+                      .toList(),
+                  selectedButtons: _selectedButtons,
+                  action: _setWorkoutFeeling,
+                  indexedValue: feelingsMap.keys.toList(),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Column(
+                    children: _exerciseList
+                        .map((exerciseEntry) => Column(children: [
+                              ExerciseEntryToggleCard(
+                                exerciseEntry: exerciseEntry,
+                                handleDelete: _removeExerciseEntry,
+                                handleDuplicate: _addExerciseEntry,
+                              ),
+                              SizedBox(height: 8)
+                            ]))
+                        .toList()),
+                ElevatedButton(
+                  onPressed: () => {_selectExercise(context)},
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.add,
+                          color: lightBlue,
+                        ),
+                        Text(
+                          'Add exercises',
+                          style: GlobalThemeData.lightTextStyleOn
+                              .merge(GlobalThemeData.boldTextStyle),
+                        ),
+                      ]),
+                  style: ButtonStyle(
+                      minimumSize: MaterialStateProperty.all(Size(
+                          (MediaQuery.of(context).size.width - 36),
+                          (MediaQuery.of(context).size.width - 36) * 0.12)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      )),
                 ),
                 OutlinedButton(
-                  onPressed: () => {
-                    Picker(
-                      adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
-                        NumberPickerColumn(
-                            initValue:
-                                _duration != null ? _duration!.inHours : 0,
-                            begin: 0,
-                            end: 23,
-                            suffix: Text(' hours')),
-                        NumberPickerColumn(
-                            initValue: _duration != null
-                                ? _duration!.inMinutes % 60
-                                : 0,
-                            begin: 0,
-                            end: 60,
-                            suffix: Text(' minutes'),
-                            jump: 1),
-                      ]),
-                      delimiter: <PickerDelimiter>[
-                        PickerDelimiter(
-                          child: Container(
-                            width: 30.0,
-                            alignment: Alignment.center,
-                            child: Text(
-                              ':',
-                              style: TextStyle(
-                                  color: accentBlue,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold),
+                    onPressed: () => {
+                          widget.workout.title =
+                              workoutTitleController.text.isEmpty
+                                  ? 'Workout'
+                                  : workoutTitleController.text,
+                          widget.workout.notes =
+                              workoutNotesController.text.isEmpty
+                                  ? null
+                                  : workoutNotesController.text,
+                          widget.workout.feeling = _workoutFeeling,
+                          widget.workout.dateTime = _pickedDate,
+                          widget.workout.duration = _duration,
+                          widget.workout.exercises = _exerciseList,
+                          Navigator.of(context).push(
+                            new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  new WorkoutPage(
+                                workout: widget.workout,
+                              ),
                             ),
                           ),
-                        )
-                      ],
-                      hideHeader: true,
-                      confirmText: 'Set',
-                      title: const Text(
-                        'Select duration',
-                      ),
-                      selectedTextStyle: TextStyle(color: Colors.blue),
-                      onConfirm: _setDuration,
-                    ).showDialog(context)
-                  },
-                  child: Text(
-                      '${_duration == null ? 'add duration' : '${_duration!.inHours}h ${_duration!.inMinutes % 60}min'}'),
-                ),
-                IconButton(
-                    onPressed: () => _selectIcon(context), icon: Icon(_icon))
-              ]),
-              SizedBox(
-                height: 16,
-              ),
-              TextFormField(
-                controller: workoutNotesController,
-                cursorColor: accentBlue,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Workout notes',
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              OneChoiceToggleButtons(
-                buttons: feelingsMap.keys
-                    .map((key) => FeelingButton(
-                          feeling: key,
-                        ))
-                    .toList(),
-                selectedButtons: _selectedButtons,
-                action: _setWorkoutFeeling,
-                indexedValue: feelingsMap.keys.toList(),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 70,
-                child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      final ExerciseEntry exerciseEntry = _exerciseList[index];
-                      return ExerciseEntryListItem(exercise: exerciseEntry);
-                    },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(
-                        height: 8,
-                      );
-                    },
-                    itemCount: _exerciseList.length),
-              ),
-              ElevatedButton(
-                onPressed: () => {_selectExercise(context)},
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Icon(
-                    Icons.add,
-                    color: lightBlue,
-                  ),
-                  Text(
-                    'Add exercises',
-                    style: GlobalThemData.lightTextStyleOn
-                        .merge(GlobalThemData.boldTextStyle),
-                  ),
-                ]),
-                style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all(Size(
-                        (MediaQuery.of(context).size.width - 36),
-                        (MediaQuery.of(context).size.width - 36) * 0.12)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    )),
-              ),
-              OutlinedButton(
-                  onPressed: () => {
-                        widget.workout.title =
-                            workoutTitleController.text.isEmpty
-                                ? 'Workout'
-                                : workoutTitleController.text,
-                        widget.workout.notes =
-                            workoutNotesController.text.isEmpty
-                                ? null
-                                : workoutNotesController.text,
-                        widget.workout.feeling = _workoutFeeling,
-                        widget.workout.dateTime = _pickedDate,
-                        widget.workout.duration = _duration,
-                        widget.workout.exercises = _exerciseList,
-                        Navigator.of(context).push(
-                          new MaterialPageRoute(
-                            builder: (BuildContext context) => new WorkoutPage(
-                              workout: widget.workout,
-                            ),
-                          ),
-                        ),
-                      },
-                  child: Text('Create Workout')),
-            ],
+                        },
+                    child: Text('Create Workout')),
+              ],
+            ),
           ),
         ),
       ),

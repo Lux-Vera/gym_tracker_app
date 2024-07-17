@@ -1,6 +1,6 @@
-class Set {
+class WorkoutSet {
   final int reps;
   final int weight;
 
-  Set(this.reps, this.weight);
+  WorkoutSet(this.reps, this.weight);
 }
