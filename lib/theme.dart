@@ -18,6 +18,9 @@ class GlobalThemData {
     color: accentBlue,
   );
 
+  static TextStyle lightTextStyleOn =
+      TextStyle(fontFamily: 'Lato', color: lightBlue);
+
   static TextStyle boldTextStyle = TextStyle(fontWeight: FontWeight.bold);
   static TextStyle textStyleSize16 = TextStyle(fontSize: 16);
   static TextStyle textStyleSize24 = TextStyle(fontSize: 24);
@@ -39,6 +42,10 @@ class GlobalThemData {
             titleTextStyle:
                 lightTextStyle.merge(boldTextStyle).merge(textStyleSize24),
             contentTextStyle: lightTextStyle.merge(textStyleSize16)),
+        buttonTheme: ButtonThemeData(
+          textTheme: ButtonTextTheme.primary,
+          buttonColor: accentBlue,
+        ),
         highlightColor: Colors.transparent,
         dividerColor: disabledBlue,
         floatingActionButtonTheme:

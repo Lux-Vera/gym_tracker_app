@@ -1,9 +1,25 @@
 import '../enums/feeling.dart';
 
-class Exercise {
-  final String name;
+enum Targets {
+  chest,
+  biceps,
+  triceps,
+  core,
+  back,
+  glutes,
+  hamstrings,
+  strength,
+  flexibility,
+  cardio
+}
 
-  Exercise(this.name);
+class Exercise {
+  String name;
+  int? pb;
+  int? goal;
+  List<Targets>? targets;
+
+  Exercise(this.name, {this.pb, this.goal, this.targets});
 }
 
 class ExerciseEntry {

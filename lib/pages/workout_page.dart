@@ -65,15 +65,20 @@ class WorkoutPage extends StatelessWidget {
             ),
             Divider(),
             workout.exercises.isNotEmpty
-                ? ListView.separated(
-                    itemBuilder: (context, index) {
-                      return ExerciseToggleListItem(
-                          exerciseEntry: workout.exercises[index]);
-                    },
-                    separatorBuilder: (context, index) => SizedBox(
-                          height: 6,
-                        ),
-                    itemCount: workout.exercises.length)
+                ? Text("Exercises added! Display feature TODO", //TODO:
+                    style: TextStyle(
+                      color: disabledBlue,
+                      fontSize: 20.0,
+                    ))
+                // ? ListView.separated(
+                //     itemBuilder: (context, index) {
+                //       return ExerciseToggleListItem(
+                //           exerciseEntry: workout.exercises[index]);
+                //     },
+                //     separatorBuilder: (context, index) => SizedBox(
+                //           height: 6,
+                //         ),
+                //     itemCount: workout.exercises.length)
                 : Text("No exercises added to this workout.",
                     style: TextStyle(
                       color: disabledBlue,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/models/exercise.dart';
 import 'package:gym_tracker_app/pages/workout_page.dart';
 import 'package:gym_tracker_app/theme.dart';
+import 'package:gym_tracker_app/widgets/exercise_list_item.dart';
+import 'package:gym_tracker_app/widgets/exercise_entry_list_item.dart';
 import 'package:gym_tracker_app/widgets/one-choice-toggle-buttons.dart';
 import '../models/workout.dart';
 import '../enums/feeling.dart';
@@ -12,25 +15,27 @@ class WorkoutForm extends StatefulWidget {
   const WorkoutForm({super.key, required this.workout});
 
   @override
-  State<WorkoutForm> createState() =>
-      _WorkoutFormState(workout.dateTime, workout.duration, workout.icon);
+  State<WorkoutForm> createState() => _WorkoutFormState(
+      workout.dateTime, workout.duration, workout.icon, workout.exercises);
 }
 
 // Define a corresponding State class.
 // This class holds the data related to the Form.
 class _WorkoutFormState extends State<WorkoutForm> {
-  Feeling? workoutFeeling;
-  DateTime pickedDate;
+  Feeling? _workoutFeeling;
+  DateTime _pickedDate;
   Duration? _duration;
   IconData _icon;
+  List<ExerciseEntry> _exerciseList;
 
   final workoutTitleController = TextEditingController();
   final workoutNotesController = TextEditingController();
 
-  _WorkoutFormState(this.pickedDate, this._duration, this._icon);
+  _WorkoutFormState(
+      this._pickedDate, this._duration, this._icon, this._exerciseList);
 
   List<bool> _selectedButtons = [false, false, false, false];
-  List<IconData> workoutIcons = [
+  List<IconData> _workoutIcons = [
     Icons.directions_run,
     Icons.directions_bike,
     Icons.directions_walk,
@@ -44,14 +49,46 @@ class _WorkoutFormState extends State<WorkoutForm> {
     Icons.nordic_walking,
   ];
 
-  void setWorkoutFeeling(Feeling? feeling) {
+  List<Exercise> _dummyExerciseList = [
+    Exercise('Dips',
+        targets: [Targets.chest, Targets.triceps, Targets.strength],
+        goal: 10,
+        pb: 1),
+    Exercise('Push ups',
+        targets: [
+          Targets.chest,
+          Targets.triceps,
+          Targets.core,
+          Targets.strength
+        ],
+        goal: 10,
+        pb: 5),
+    Exercise('Pistol Squats',
+        targets: [Targets.hamstrings, Targets.strength, Targets.flexibility],
+        goal: 1,
+        pb: 0),
+    Exercise('Sit ups', targets: [Targets.core, Targets.strength]),
+    Exercise('Box Jumps', targets: [Targets.cardio, Targets.hamstrings]),
+    Exercise('Pull ups',
+        targets: [Targets.back, Targets.triceps, Targets.strength],
+        goal: 1,
+        pb: 0),
+    Exercise('Chin ups',
+        targets: [Targets.back, Targets.biceps, Targets.strength],
+        goal: 1,
+        pb: 0),
+    Exercise('Leg lifts', targets: [Targets.core, Targets.strength], pb: 20),
+  ];
+
+  /* Set States */
+  void _setWorkoutFeeling(Feeling? feeling) {
     // This approch makes sure workout isn't altered unless saved
     setState(() {
-      workoutFeeling = feeling;
+      _workoutFeeling = feeling;
     });
   }
 
-  void setDuration(Picker picker, List<int> value) {
+  void _setDuration(Picker picker, List<int> value) {
     setState(() {
       _duration = Duration(
           hours: picker.getSelectedValues()[0],
@@ -59,6 +96,29 @@ class _WorkoutFormState extends State<WorkoutForm> {
     });
   }
 
+  void _addExercise(ExerciseEntry exercise) {
+    setState(() {
+      _exerciseList.add(exercise);
+    });
+  }
+
+  void _setIcon(IconData icon) {
+    if (icon != _icon) {
+      setState(() {
+        _icon = icon;
+      });
+    }
+  }
+
+  void _setDate(DateTime date) {
+    if (date != _pickedDate) {
+      setState(() {
+        _pickedDate = date;
+      });
+    }
+  }
+
+  /// Build dialog with icon grid
   Widget iconPickerDialog(BuildContext context) {
     IconData picked = _icon;
 
@@ -70,7 +130,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
           height: 32 * 6,
           child: GridView.count(
             crossAxisCount: 4,
-            children: workoutIcons
+            children: _workoutIcons
                 .map((icon) => IconButton(
                       onPressed: () => setState(() {
                         picked = icon;
@@ -99,30 +159,82 @@ class _WorkoutFormState extends State<WorkoutForm> {
     }));
   }
 
+  /// Build dialog with exercise list
+  Widget exerciseSelectorDialog(BuildContext context) {
+    List<ExerciseEntry> exerciseEntries = [];
+
+    return StatefulBuilder(builder: ((context, setState) {
+      return AlertDialog(
+        title: Text('Select exercise'),
+        content: Container(
+          width: MediaQuery.of(context).size.width - 32,
+          height: MediaQuery.of(context).size.height - 32,
+          child: ListView.separated(
+              itemBuilder: (context, index) {
+                Exercise exercise = _dummyExerciseList[index];
+                return ExerciseListItem(
+                    exercise: exercise,
+                    action: () => {
+                          setState(
+                            () => exerciseEntries
+                                .add(ExerciseEntry(exercise, [])),
+                          )
+                        });
+              },
+              separatorBuilder: ((context, index) => SizedBox(height: 8)),
+              itemCount: _dummyExerciseList.length),
+        ),
+        backgroundColor: lightBlue,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(exerciseEntries);
+            },
+            child: Text('Select'),
+          ),
+        ],
+      );
+    }));
+  }
+
+  /* Actions */
   Future<void> _selectIcon(BuildContext context) async {
     final IconData? picked =
         await showDialog(context: context, builder: iconPickerDialog);
 
     print(picked);
-    if (picked != null && picked != _icon) {
-      setState(() {
-        _icon = picked;
-      });
+    if (picked != null) {
+      _setIcon(picked);
     }
   }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: pickedDate,
+      initialDate: _pickedDate,
       currentDate: DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime(DateTime.now().year + 1),
     );
 
-    if (picked != null && picked != pickedDate) {
-      setState(() {
-        pickedDate = picked;
+    if (picked != null) {
+      _setDate(picked);
+    }
+  }
+
+  Future<void> _selectExercise(BuildContext context) async {
+    final List<ExerciseEntry>? exercises =
+        await showDialog(context: context, builder: exerciseSelectorDialog);
+
+    if (exercises != null) {
+      exercises.forEach((exercise) {
+        _addExercise(exercise);
       });
     }
   }
@@ -164,7 +276,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
                 OutlinedButton(
                     onPressed: () => {_selectDate(context)},
                     child: Text(
-                        '${pickedDate.year}/${pickedDate.month}/${pickedDate.day}')),
+                        '${_pickedDate.year}/${_pickedDate.month}/${_pickedDate.day}')),
                 SizedBox(
                   width: 16,
                 ),
@@ -208,7 +320,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
                         'Select duration',
                       ),
                       selectedTextStyle: TextStyle(color: Colors.blue),
-                      onConfirm: setDuration,
+                      onConfirm: _setDuration,
                     ).showDialog(context)
                   },
                   child: Text(
@@ -238,19 +350,49 @@ class _WorkoutFormState extends State<WorkoutForm> {
                         ))
                     .toList(),
                 selectedButtons: _selectedButtons,
-                action: setWorkoutFeeling,
+                action: _setWorkoutFeeling,
                 indexedValue: feelingsMap.keys.toList(),
               ),
               SizedBox(
                 height: 16,
               ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 70,
+                child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      final ExerciseEntry exerciseEntry = _exerciseList[index];
+                      return ExerciseEntryListItem(exercise: exerciseEntry);
+                    },
+                    separatorBuilder: (context, index) {
+                      return SizedBox(
+                        height: 8,
+                      );
+                    },
+                    itemCount: _exerciseList.length),
+              ),
               ElevatedButton(
-                onPressed: () => {},
-                child: Text('Add exercise'),
+                onPressed: () => {_selectExercise(context)},
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Icon(
+                    Icons.add,
+                    color: lightBlue,
+                  ),
+                  Text(
+                    'Add exercises',
+                    style: GlobalThemData.lightTextStyleOn
+                        .merge(GlobalThemData.boldTextStyle),
+                  ),
+                ]),
                 style: ButtonStyle(
                     minimumSize: MaterialStateProperty.all(Size(
                         (MediaQuery.of(context).size.width - 36),
-                        (MediaQuery.of(context).size.width - 36) * 0.12))),
+                        (MediaQuery.of(context).size.width - 36) * 0.12)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    )),
               ),
               OutlinedButton(
                   onPressed: () => {
@@ -262,9 +404,10 @@ class _WorkoutFormState extends State<WorkoutForm> {
                             workoutNotesController.text.isEmpty
                                 ? null
                                 : workoutNotesController.text,
-                        widget.workout.feeling = workoutFeeling,
-                        widget.workout.dateTime = pickedDate,
+                        widget.workout.feeling = _workoutFeeling,
+                        widget.workout.dateTime = _pickedDate,
                         widget.workout.duration = _duration,
+                        widget.workout.exercises = _exerciseList,
                         Navigator.of(context).push(
                           new MaterialPageRoute(
                             builder: (BuildContext context) => new WorkoutPage(

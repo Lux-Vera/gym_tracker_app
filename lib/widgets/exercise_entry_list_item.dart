@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import '../models/exercise.dart';
 import '../theme.dart';
 
-class ExerciseListItem extends StatefulWidget {
-  final Exercise exercise;
+class ExerciseEntryListItem extends StatefulWidget {
+  final ExerciseEntry exercise;
   final Function? action;
 
-  const ExerciseListItem({Key? key, required this.exercise, this.action})
+  const ExerciseEntryListItem({Key? key, required this.exercise, this.action})
       : super(key: key);
 
   @override
-  _ExerciseListItemState createState() => _ExerciseListItemState();
+  _ExerciseEntryListItemState createState() => _ExerciseEntryListItemState();
 }
 
-class _ExerciseListItemState extends State<ExerciseListItem> {
+class _ExerciseEntryListItemState extends State<ExerciseEntryListItem> {
   bool isOpen = false;
 
   void _toggleOpen() {
@@ -38,7 +38,7 @@ class _ExerciseListItemState extends State<ExerciseListItem> {
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
               color: isOpen ? accentBlue : white,
               child: Text(
-                widget.exercise.name,
+                widget.exercise.exercise.name,
                 style: TextStyle(color: isOpen ? lightBlue : accentBlue),
               ),
             ),
@@ -59,8 +59,8 @@ class _ExerciseListItemState extends State<ExerciseListItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Latest: ...'), //TODO:
-                      Text('PB: ${widget.exercise.pb.toString()}'),
-                      Text('Goal: ${widget.exercise.goal.toString()}')
+                      Text('PB: ${widget.exercise.exercise.pb.toString()}'),
+                      Text('Goal: ${widget.exercise.exercise.goal.toString()}')
                     ])),
         ]));
   }
