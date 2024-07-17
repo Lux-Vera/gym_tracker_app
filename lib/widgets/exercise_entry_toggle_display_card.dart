@@ -88,7 +88,7 @@ class _ExerciseEntryToggleDisplayCardState
                 //                 Text('Reps: ${e.reps}. Weight: ${e.weight}kg'))
                 //             .toList())
                 //     :
-                Text('No sets added.'), // TODO:
+                Text('No sets added.'), // TODO: fiiix
           ),
       ]),
     );
