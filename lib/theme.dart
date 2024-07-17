@@ -10,40 +10,54 @@ class GlobalThemData {
   // static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
   // static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
 
-  static ThemeData lightThemeData = themeData();
+  static ThemeData lightThemeData = themeData(lightColorScheme);
   // static ThemeData darkThemeData = themeData(darkColorScheme, Colors.grey);
 
-  static ThemeData themeData() {
+  static TextStyle lightTextStyle = TextStyle(
+    fontFamily: 'Lato',
+    color: accentBlue,
+  );
+
+  static TextStyle boldTextStyle = TextStyle(fontWeight: FontWeight.bold);
+  static TextStyle textStyleSize16 = TextStyle(fontSize: 16);
+  static TextStyle textStyleSize24 = TextStyle(fontSize: 24);
+
+  static ThemeData themeData(ColorScheme colorScheme) {
     return ThemeData(
         textTheme:
             TextTheme().apply(bodyColor: accentBlue, displayColor: accentBlue),
         fontFamily: 'Lato',
         iconTheme: IconThemeData(color: accentBlue, size: 32),
-        // colorScheme: colorScheme,
+        colorScheme: colorScheme,
         appBarTheme: AppBarTheme(color: lightBlue, foregroundColor: accentBlue),
         canvasColor: lightBlue,
         scaffoldBackgroundColor: lightBlue,
         bottomAppBarColor: lightBlue,
         disabledColor: disabledBlue,
+        dialogTheme: DialogTheme(
+            backgroundColor: white,
+            titleTextStyle:
+                lightTextStyle.merge(boldTextStyle).merge(textStyleSize24),
+            contentTextStyle: lightTextStyle.merge(textStyleSize16)),
         highlightColor: Colors.transparent,
         dividerColor: disabledBlue,
         floatingActionButtonTheme:
             FloatingActionButtonThemeData(backgroundColor: accentOrange));
   }
 
-  // static const ColorScheme lightColorScheme = ColorScheme(
-  //   primary: accentOrange,
-  //   onPrimary: accentBlue,
-  //   secondary: accentOrange,
-  //   onSecondary: white,
-  //   error: Colors.redAccent,
-  //   onError: white,
-  //   background: lightBlue,
-  //   onBackground: accentBlue,
-  //   surface: white,
-  //   onSurface: accentBlue,
-  //   brightness: Brightness.light,
-  // );
+  static const ColorScheme lightColorScheme = ColorScheme(
+    primary: accentBlue,
+    onPrimary: lightBlue,
+    secondary: accentOrange,
+    onSecondary: white,
+    error: Colors.redAccent,
+    onError: white,
+    background: lightBlue,
+    onBackground: accentBlue,
+    surface: white,
+    onSurface: accentBlue,
+    brightness: Brightness.light,
+  );
 
   // static const ColorScheme darkColorScheme = ColorScheme(
   //   primary: Color(0xFFFF8383),

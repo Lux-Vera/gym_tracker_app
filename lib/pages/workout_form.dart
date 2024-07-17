@@ -81,7 +81,6 @@ class _WorkoutFormState extends State<WorkoutForm> {
                 .toList(),
           ),
         ),
-        backgroundColor: lightBlue,
         actions: [
           TextButton(
             onPressed: () {
@@ -92,7 +91,6 @@ class _WorkoutFormState extends State<WorkoutForm> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(picked);
-              // TODO: Add functionality for the "OK" button
             },
             child: Text('OK'),
           ),
@@ -205,19 +203,9 @@ class _WorkoutFormState extends State<WorkoutForm> {
                         )
                       ],
                       hideHeader: true,
-                      textStyle: TextStyle(
-                          color: accentBlue, fontFamily: 'Lato', fontSize: 16),
-                      cancelTextStyle: TextStyle(
-                          color: accentBlue, fontFamily: 'Lato', fontSize: 16),
                       confirmText: 'Set',
-                      confirmTextStyle: TextStyle(
-                          color: accentBlue, fontFamily: 'Lato', fontSize: 16),
                       title: const Text(
                         'Select duration',
-                        style: TextStyle(
-                            color: accentBlue,
-                            fontFamily: 'Lato',
-                            fontWeight: FontWeight.bold),
                       ),
                       selectedTextStyle: TextStyle(color: Colors.blue),
                       onConfirm: setDuration,
@@ -255,6 +243,14 @@ class _WorkoutFormState extends State<WorkoutForm> {
               ),
               SizedBox(
                 height: 16,
+              ),
+              ElevatedButton(
+                onPressed: () => {},
+                child: Text('Add exercise'),
+                style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(Size(
+                        (MediaQuery.of(context).size.width - 36),
+                        (MediaQuery.of(context).size.width - 36) * 0.12))),
               ),
               OutlinedButton(
                   onPressed: () => {
