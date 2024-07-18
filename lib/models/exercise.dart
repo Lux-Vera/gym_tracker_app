@@ -25,7 +25,7 @@ class Exercise {
 
 class ExerciseEntry {
   final Exercise exercise;
-  final List<WorkoutSet> workoutSets;
+  final List<WorkoutSet?> workoutSets;
   final Feeling? feeling;
   final String? notes;
 
