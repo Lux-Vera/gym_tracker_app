@@ -379,7 +379,15 @@ class _WorkoutFormState extends State<WorkoutForm> {
                                 handleDelete: _removeExerciseEntry,
                                 handleDuplicate: _addExerciseEntry,
                               ),
-                              SizedBox(height: 8)
+                              DragTarget(builder: (context, o, d) {
+                                return Container(
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 4, horizontal: 0),
+                                    height: 4,
+                                    color: o.isNotEmpty
+                                        ? accentOrange.withOpacity(0.5)
+                                        : Colors.transparent);
+                              })
                             ]))
                         .toList()),
                 ElevatedButton(

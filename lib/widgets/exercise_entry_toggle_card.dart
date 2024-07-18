@@ -8,12 +8,10 @@ class ExerciseEntryToggleCard extends StatefulWidget {
   final ExerciseEntry exerciseEntry;
   final Function? handleDelete;
   final Function? handleDuplicate;
-  final Function? handleSelect;
 
   const ExerciseEntryToggleCard(
       {Key? key,
       required this.exerciseEntry,
-      this.handleSelect,
       this.handleDelete,
       this.handleDuplicate})
       : super(key: key);
@@ -25,6 +23,7 @@ class ExerciseEntryToggleCard extends StatefulWidget {
 
 class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
   bool _isOpen = false;
+  bool _openOnDragEnd = false;
   List<WorkoutSet?> _sets;
 
   final List<TextEditingController?> repsController = [];
@@ -43,6 +42,20 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
     }
   }
 
+  void _setOpenOnDragEnd(bool value) {
+    setState(() {
+      _openOnDragEnd = value;
+    });
+  }
+
+  void _close() {
+    if (_isOpen) {
+      setState(() {
+        _isOpen = false;
+      });
+    }
+  }
+
   void _toggleOpen() {
     setState(() {
       _isOpen = !_isOpen;
@@ -57,10 +70,58 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
     });
   }
 
+  Widget draggingCard() {
+    const padding = 16 * 2;
+    return Column(children: [
+      Container(
+        decoration: BoxDecoration(
+          color: white,
+          border: Border.all(color: accentBlue, width: 2),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        width: MediaQuery.of(context).size.width - padding,
+        height: 48,
+        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+        child: Row(
+          children: [
+            Icon(
+              Icons.chevron_right,
+              color: accentBlue,
+            ),
+            Text(
+              widget.exerciseEntry.exercise.name,
+              style: GlobalThemeData.boldTextStyle
+                  .merge(GlobalThemeData.lightTextStyle)
+                  .merge(GlobalThemeData.textStyleSize16),
+            ),
+            Spacer(),
+            if (widget.handleDelete != null || widget.handleDuplicate != null)
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: Icon(Icons.more_vert),
+              ),
+          ],
+        ),
+      ),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () => {_toggleOpen(), widget.handleSelect!()},
+    return LongPressDraggable(
+      onDragStarted: () => {_setOpenOnDragEnd(_isOpen), _close()},
+      onDragEnd: (e) => {if (_openOnDragEnd) _toggleOpen()},
+      feedback: draggingCard(),
+      child: GestureDetector(
+        onTap: () => {_toggleOpen()},
         child: Column(children: [
           ClipRRect(
             borderRadius: BorderRadius.only(
@@ -69,10 +130,13 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
                 bottomLeft: _isOpen ? Radius.zero : Radius.circular(10),
                 bottomRight: _isOpen ? Radius.zero : Radius.circular(10)),
             child: Container(
+                decoration: BoxDecoration(
+                    color: _isOpen ? accentBlue : white,
+                    border: Border.all(
+                        color: _isOpen ? accentBlue : white, width: 2)),
                 width: MediaQuery.of(context).size.width,
                 height: 48,
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-                color: _isOpen ? accentBlue : white,
                 child: Row(
                   children: [
                     Icon(
@@ -185,6 +249,8 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
                     )
                   ]),
             ),
-        ]));
+        ]),
+      ),
+    );
   }
 }
