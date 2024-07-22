@@ -125,6 +125,15 @@ class _WorkoutFormState extends State<WorkoutForm> {
     }
   }
 
+  void _reorderExerciseList(int oldIndex, int newIndex) {
+    if (oldIndex != newIndex) {
+      setState(() {
+        ExerciseEntry movedExercise = _exerciseList.removeAt(oldIndex);
+        _exerciseList.insert(newIndex, movedExercise);
+      });
+    }
+  }
+
   /// Build dialog with icon grid
   Widget iconPickerDialog(BuildContext context) {
     IconData picked = _icon;
@@ -369,25 +378,40 @@ class _WorkoutFormState extends State<WorkoutForm> {
                   indexedValue: feelingsMap.keys.toList(),
                 ),
                 SizedBox(
-                  height: 16,
+                  height: 8,
+                ),
+                Divider(
+                  thickness: 2,
+                ),
+                SizedBox(
+                  height: 8,
                 ),
                 Column(
                     children: _exerciseList
+                        .asMap()
+                        .entries
                         .map((exerciseEntry) => Column(children: [
                               ExerciseEntryToggleCard(
-                                exerciseEntry: exerciseEntry,
+                                index: exerciseEntry.key,
+                                exerciseEntry: exerciseEntry.value,
                                 handleDelete: _removeExerciseEntry,
                                 handleDuplicate: _addExerciseEntry,
                               ),
-                              DragTarget(builder: (context, o, d) {
-                                return Container(
-                                    margin: EdgeInsets.symmetric(
-                                        vertical: 4, horizontal: 0),
-                                    height: 4,
-                                    color: o.isNotEmpty
-                                        ? accentOrange.withOpacity(0.5)
-                                        : Colors.transparent);
-                              })
+                              DragTarget<int>(
+                                builder: (context, o, d) {
+                                  return Container(
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 4, horizontal: 0),
+                                      height: 4,
+                                      color: o.isNotEmpty
+                                          ? accentOrange.withOpacity(0.5)
+                                          : Colors.transparent);
+                                },
+                                onAcceptWithDetails: (details) {
+                                  _reorderExerciseList(
+                                      details.data, exerciseEntry.key);
+                                },
+                              )
                             ]))
                         .toList()),
                 ElevatedButton(

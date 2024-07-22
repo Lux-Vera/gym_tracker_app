@@ -5,12 +5,14 @@ import '../models/exercise.dart';
 import '../theme.dart';
 
 class ExerciseEntryToggleCard extends StatefulWidget {
+  int index;
   final ExerciseEntry exerciseEntry;
   final Function? handleDelete;
   final Function? handleDuplicate;
 
-  const ExerciseEntryToggleCard(
+  ExerciseEntryToggleCard(
       {Key? key,
+      required this.index,
       required this.exerciseEntry,
       this.handleDelete,
       this.handleDuplicate})
@@ -116,7 +118,8 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
 
   @override
   Widget build(BuildContext context) {
-    return LongPressDraggable(
+    return LongPressDraggable<int>(
+      data: widget.index,
       onDragStarted: () => {_setOpenOnDragEnd(_isOpen), _close()},
       onDragEnd: (e) => {if (_openOnDragEnd) _toggleOpen()},
       feedback: draggingCard(),
