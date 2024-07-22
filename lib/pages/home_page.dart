@@ -20,16 +20,15 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).push(
       new MaterialPageRoute(
         builder: (BuildContext context) => new WorkoutForm(
-          workout: Workout("Test", DateTime.now(), []),
-        ),
+            workout: Workout("Test", DateTime.now(), []),
+            saveWorkout: _addWorkout),
       ),
     );
   }
 
-  void _addWorkout() {
+  void _addWorkout(Workout workout) {
     setState(() {
-      _workoutList.add(Workout(
-          'Workout name', DateTime.now(), [])); // TODO: Replace with user input
+      _workoutList.add(workout); // TODO: Replace with user input
     });
   }
 

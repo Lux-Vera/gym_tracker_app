@@ -10,9 +10,14 @@ class WorkoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(workout.exercises[0].workoutSets);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Navigator.popUntil(context, ModalRoute.withName('/'));
+            },
+            icon: Icon(Icons.arrow_back)),
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         child: Column(

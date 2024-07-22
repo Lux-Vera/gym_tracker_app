@@ -91,9 +91,14 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
         ),
         width: MediaQuery.of(context).size.width - padding,
         height: 48,
-        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
         child: Row(
           children: [
+            Icon(
+              Icons.drag_indicator,
+              color: disabledBlue,
+            ),
+            VerticalDivider(),
             Icon(
               Icons.chevron_right,
               color: accentBlue,
@@ -121,7 +126,8 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
     return LongPressDraggable<int>(
       data: widget.index,
       onDragStarted: () => {_setOpenOnDragEnd(_isOpen), _close()},
-      onDragEnd: (e) => {if (_openOnDragEnd) _toggleOpen()},
+      onDragEnd: (e) =>
+          {if (_openOnDragEnd) _toggleOpen()}, //FIXME: Opens wrong card
       feedback: draggingCard(),
       child: GestureDetector(
         onTap: () => {_toggleOpen()},
@@ -139,9 +145,14 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
                         color: _isOpen ? accentBlue : white, width: 2)),
                 width: MediaQuery.of(context).size.width,
                 height: 48,
-                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                 child: Row(
                   children: [
+                    Icon(
+                      Icons.drag_indicator,
+                      color: disabledBlue,
+                    ),
+                    VerticalDivider(),
                     Icon(
                       _isOpen ? Icons.keyboard_arrow_down : Icons.chevron_right,
                       color: _isOpen ? lightBlue : accentBlue,

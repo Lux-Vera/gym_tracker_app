@@ -12,7 +12,9 @@ import 'package:flutter_picker/flutter_picker.dart';
 
 class WorkoutForm extends StatefulWidget {
   final Workout workout;
-  const WorkoutForm({super.key, required this.workout});
+  final Function saveWorkout;
+  const WorkoutForm(
+      {super.key, required this.workout, required this.saveWorkout});
 
   @override
   State<WorkoutForm> createState() => _WorkoutFormState(
@@ -134,6 +136,29 @@ class _WorkoutFormState extends State<WorkoutForm> {
     }
   }
 
+  void _saveAndNavigate() {
+    widget.workout.title = workoutTitleController.text.isEmpty
+        ? 'Workout'
+        : workoutTitleController.text;
+    widget.workout.notes = workoutNotesController.text.isEmpty
+        ? null
+        : workoutNotesController.text;
+    widget.workout.feeling = _workoutFeeling;
+    widget.workout.dateTime = _pickedDate;
+    widget.workout.duration = _duration;
+    widget.workout.exercises = _exerciseList;
+
+    widget.saveWorkout(widget.workout);
+
+    Navigator.of(context).push(
+      new MaterialPageRoute(
+        builder: (BuildContext context) => new WorkoutPage(
+          workout: widget.workout,
+        ),
+      ),
+    );
+  }
+
   /// Build dialog with icon grid
   Widget iconPickerDialog(BuildContext context) {
     IconData picked = _icon;
@@ -231,7 +256,6 @@ class _WorkoutFormState extends State<WorkoutForm> {
     final IconData? picked =
         await showDialog(context: context, builder: iconPickerDialog);
 
-    print(picked);
     if (picked != null) {
       _setIcon(picked);
     }
@@ -290,7 +314,15 @@ class _WorkoutFormState extends State<WorkoutForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit workout"),
+        centerTitle: true,
+        title: Text(
+          "Edit workout",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+              onPressed: () => {_saveAndNavigate()}, icon: Icon(Icons.save))
+        ],
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
@@ -438,30 +470,6 @@ class _WorkoutFormState extends State<WorkoutForm> {
                             borderRadius: BorderRadius.circular(10)),
                       )),
                 ),
-                OutlinedButton(
-                    onPressed: () => {
-                          widget.workout.title =
-                              workoutTitleController.text.isEmpty
-                                  ? 'Workout'
-                                  : workoutTitleController.text,
-                          widget.workout.notes =
-                              workoutNotesController.text.isEmpty
-                                  ? null
-                                  : workoutNotesController.text,
-                          widget.workout.feeling = _workoutFeeling,
-                          widget.workout.dateTime = _pickedDate,
-                          widget.workout.duration = _duration,
-                          widget.workout.exercises = _exerciseList,
-                          Navigator.of(context).push(
-                            new MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  new WorkoutPage(
-                                workout: widget.workout,
-                              ),
-                            ),
-                          ),
-                        },
-                    child: Text('Create Workout')),
               ],
             ),
           ),
