@@ -116,6 +116,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           PopupMenuButton<SortingOption>(
             tooltip: 'Sort',
+            position: PopupMenuPosition.under,
+            offset: Offset(0, 0),
             icon: Icon(
               Icons.sort,
             ),
