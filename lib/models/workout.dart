@@ -12,7 +12,8 @@ class Workout {
   List<ExerciseEntry> exercises;
 
   Workout(this.title, this.dateTime, this.exercises,
-      {this.duration,
+      {Key? key,
+      this.duration,
       this.icon = Icons.directions_run,
       this.notes,
       this.feeling});

@@ -47,7 +47,7 @@ class GlobalThemeData {
           textTheme: ButtonTextTheme.primary,
           buttonColor: accentBlue,
         ),
-        highlightColor: Colors.transparent,
+        highlightColor: disabledBlue,
         dividerColor: disabledBlue,
         floatingActionButtonTheme:
             FloatingActionButtonThemeData(backgroundColor: accentOrange));
