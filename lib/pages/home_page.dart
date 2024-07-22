@@ -28,7 +28,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _addWorkout(Workout workout) {
     setState(() {
-      _workoutList.add(workout); // TODO: Replace with user input
+      _workoutList.add(workout);
+      _workoutList.sort(((a, b) => b.dateTime.compareTo(a.dateTime)));
     });
   }
 
