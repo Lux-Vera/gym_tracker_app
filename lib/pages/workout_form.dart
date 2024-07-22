@@ -262,6 +262,22 @@ class _WorkoutFormState extends State<WorkoutForm> {
     }
   }
 
+  Widget dragTarget(int newIndex) {
+    return DragTarget<int>(
+      builder: (context, o, d) {
+        return Container(
+            margin: EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+            height: 4,
+            color: o.isNotEmpty
+                ? accentOrange.withOpacity(0.5)
+                : Colors.transparent);
+      },
+      onAcceptWithDetails: (details) {
+        _reorderExerciseList(details.data, newIndex);
+      },
+    );
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -383,9 +399,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
                 Divider(
                   thickness: 2,
                 ),
-                SizedBox(
-                  height: 8,
-                ),
+                dragTarget(0),
                 Column(
                     children: _exerciseList
                         .asMap()
@@ -397,21 +411,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
                                 handleDelete: _removeExerciseEntry,
                                 handleDuplicate: _addExerciseEntry,
                               ),
-                              DragTarget<int>(
-                                builder: (context, o, d) {
-                                  return Container(
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: 4, horizontal: 0),
-                                      height: 4,
-                                      color: o.isNotEmpty
-                                          ? accentOrange.withOpacity(0.5)
-                                          : Colors.transparent);
-                                },
-                                onAcceptWithDetails: (details) {
-                                  _reorderExerciseList(
-                                      details.data, exerciseEntry.key);
-                                },
-                              )
+                              dragTarget(exerciseEntry.key)
                             ]))
                         .toList()),
                 ElevatedButton(
