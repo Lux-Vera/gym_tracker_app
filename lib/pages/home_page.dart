@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/pages/workout_form.dart';
+import 'package:gym_tracker_app/widgets/filter_popup.dart';
 import '../widgets/workout_list_item.dart';
 import '../models/workout.dart';
 import '../widgets/bottom-nav-bar.dart';
@@ -31,6 +32,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Workout> _workoutList = [];
   SortingOption _sorting = SortingOption.sortOnDateRecents;
+  List<String> _selectedFilters = [];
 
   void _createWorkout() {
     Navigator.of(context).push(
@@ -75,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void handleClick(SortingOption value) {
+  void handleSortRequest(SortingOption value) {
     setState(() {
       _sorting = value;
     });
@@ -97,6 +99,26 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void _toggleFilter(FilterOption option) {
+    setState(() {
+      if (_selectedFilters.contains(option.toString())) {
+        _selectedFilters.remove(option.toString());
+      } else {
+        _selectedFilters.add(option.toString());
+      }
+    });
+  }
+
+  void _showFilterPopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => FilterPopup(
+        selectedFilters: _selectedFilters,
+        onFilterSelected: _toggleFilter,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: Icon(Icons.filter_alt),
             onPressed: () {
-              // Handle filters for workout list
+              _showFilterPopup(context);
             },
           ),
           PopupMenuButton<SortingOption>(
@@ -121,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(
               Icons.sort,
             ),
-            onSelected: handleClick,
+            onSelected: handleSortRequest,
             initialValue: _sorting,
             itemBuilder: (BuildContext context) {
               return sortingOptionsMap.keys.map((SortingOption option) {
@@ -141,7 +163,10 @@ class _MyHomePageState extends State<MyHomePage> {
           itemCount: _workoutList.length,
           itemBuilder: (context, index) {
             final workout = _workoutList[index];
-            return WorkoutListItem(key: Key(workout.title), workout: workout);
+            if (_selectedFilters.isEmpty) {
+              return WorkoutListItem(key: Key(workout.title), workout: workout);
+            } else
+              return SizedBox.shrink();
           },
           separatorBuilder: (context, index) => SizedBox(
             height: 6,
