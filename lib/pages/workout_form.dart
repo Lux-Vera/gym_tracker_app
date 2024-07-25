@@ -147,6 +147,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
     widget.workout.dateTime = _pickedDate;
     widget.workout.duration = _duration;
     widget.workout.exercises = _exerciseList;
+    widget.workout.icon = _icon;
 
     widget.saveWorkout(widget.workout);
 
