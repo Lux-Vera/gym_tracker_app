@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "310248746121",
+    "firebase_url": "https://gym-tracker-app-2ac61-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "gym-tracker-app-2ac61",
+    "storage_bucket": "gym-tracker-app-2ac61.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310248746121:android:b460b122ec37e3b81d6a58",
+        "android_client_info": {
+          "package_name": "com.example.gym_tracker_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRmxtta0em8L9MrQpWTLaDsXjun7xIe7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
