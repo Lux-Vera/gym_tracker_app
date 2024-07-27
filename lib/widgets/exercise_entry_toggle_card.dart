@@ -124,7 +124,8 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
   @override
   Widget build(BuildContext context) {
     return LongPressDraggable<int>(
-      data: widget.index,
+      data: widget
+          .index, //FIXME: When adding more exercises the index is wrong? drag drop functionality bug
       onDragStarted: () => {_setOpenOnDragEnd(_isOpen), _close()},
       onDragEnd: (e) =>
           {if (_openOnDragEnd) _toggleOpen()}, //FIXME: Opens wrong card
