@@ -66,7 +66,7 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
 
   void _increaseSets() {
     setState(() {
-      _sets.add(WorkoutSet(0, 0));
+      _sets.add(WorkoutSet(reps: 0, weight: 0));
       repsController.add(TextEditingController());
       weightController.add(TextEditingController());
     });
