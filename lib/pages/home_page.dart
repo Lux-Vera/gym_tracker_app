@@ -1,28 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/models/exercise.dart';
 import 'package:gym_tracker_app/pages/workout_form.dart';
-import 'package:gym_tracker_app/widgets/filter_popup.dart';
-import '../widgets/workout_list_item.dart';
 import '../models/workout.dart';
 import '../widgets/bottom-nav-bar.dart';
 import '../widgets/custom-floating-action-button.dart';
-import 'package:collection/collection.dart';
 import 'workout_list_page.dart';
 import 'my_exercise_page.dart';
-
-enum SortingOption {
-  sortOnDateRecents,
-  sortOnDateOldest,
-  sortOnDuration,
-  sortOnDurationReverse
-}
-
-const Map<SortingOption, String> sortingOptionsMap = {
-  SortingOption.sortOnDateRecents: 'Recents first',
-  SortingOption.sortOnDateOldest: 'Oldest first',
-  SortingOption.sortOnDuration: 'Duration ascending',
-  SortingOption.sortOnDurationReverse: 'Duration decending'
-};
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key}) : super(key: key);
