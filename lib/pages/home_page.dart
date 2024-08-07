@@ -4,11 +4,12 @@ import '../models/workout.dart';
 import '../widgets/bottom-nav-bar.dart';
 import '../widgets/custom-floating-action-button.dart';
 import 'workout_list_page.dart';
-import 'my_exercise_page.dart';
+import 'exercise_list_page.dart';
+import 'statistics_page.dart';
+import 'user_page.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key}) : super(key: key);
-  final String title = "Workouts";
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -17,11 +18,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Widget> _pages = [
     WorkoutListPage(),
-    MyExercisesPage(),
-    WorkoutListPage(),
-    WorkoutListPage()
+    ExerciseListPage(),
+    StatisticsPage(),
+    UserPage()
   ];
   int _currentPageIndex = 0;
+
+  void _setCurrentPageIndex(int i) {
+    if (_currentPageIndex != i) {
+      setState(() {
+        _currentPageIndex = i;
+      });
+    }
+  }
 
   void _createWorkout() {
     Navigator.of(context).push(
@@ -66,7 +75,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       extendBody: true,
       body: _pages.elementAt(_currentPageIndex),
-      bottomNavigationBar: BottomNavBar(focusButtonIndex: _currentPageIndex),
+      bottomNavigationBar: BottomNavBar(
+        focusButtonIndex: _currentPageIndex,
+        setNewIndex: _setCurrentPageIndex,
+      ),
       floatingActionButton: CustomFloatingActionButton(
           icon: Icons.add, action: _actionButtonAction),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,

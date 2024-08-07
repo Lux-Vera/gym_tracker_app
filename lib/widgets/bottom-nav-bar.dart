@@ -3,8 +3,9 @@ import '../theme.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int focusButtonIndex;
+  final Function setNewIndex;
 
-  BottomNavBar({this.focusButtonIndex = -1});
+  BottomNavBar({this.focusButtonIndex = -1, required this.setNewIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +18,28 @@ class BottomNavBar extends StatelessWidget {
         mainAxisAlignment:
             MainAxisAlignment.spaceEvenly, // Evenly distribute icons
         children: [
-          BottomIconButton(Icon(Icons.fitness_center), "Workouts",
+          BottomIconButton(
+                  icon: Icon(Icons.fitness_center),
+                  tooltip: "Workouts",
+                  onPressed: () => setNewIndex(0),
                   focus: focusButtonIndex == 0)
               .build(context),
-          BottomIconButton(Icon(Icons.dynamic_feed), "Exercises",
+          BottomIconButton(
+                  icon: Icon(Icons.dynamic_feed),
+                  tooltip: "Exercises",
+                  onPressed: () => setNewIndex(1),
                   focus: focusButtonIndex == 1)
               .build(context),
-          BottomIconButton(Icon(Icons.query_stats), "Stats",
+          BottomIconButton(
+                  icon: Icon(Icons.query_stats),
+                  tooltip: "Stats",
+                  onPressed: () => setNewIndex(2),
                   focus: focusButtonIndex == 2)
               .build(context),
-          BottomIconButton(Icon(Icons.account_circle), "Profile",
+          BottomIconButton(
+                  icon: Icon(Icons.account_circle),
+                  tooltip: "Profile",
+                  onPressed: () => setNewIndex(3),
                   focus: focusButtonIndex == 3)
               .build(context),
           Spacer(),
@@ -40,8 +53,13 @@ class BottomIconButton extends State<StatefulWidget> {
   final Icon icon;
   final bool focus;
   final String tooltip;
+  final void Function() onPressed;
 
-  BottomIconButton(this.icon, this.tooltip, {this.focus = false});
+  BottomIconButton(
+      {required this.icon,
+      required this.tooltip,
+      this.focus = false,
+      required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +70,7 @@ class BottomIconButton extends State<StatefulWidget> {
       color: focus ? accentOrange : accentBlue,
       mouseCursor: SystemMouseCursors.click,
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      onPressed: () => {},
+      onPressed: onPressed,
     );
   }
 }
