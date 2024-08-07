@@ -14,9 +14,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class WorkoutForm extends StatefulWidget {
   final Workout workout;
-  final Function saveWorkout;
-  const WorkoutForm(
-      {super.key, required this.workout, required this.saveWorkout});
+
+  const WorkoutForm({super.key, required this.workout});
 
   @override
   State<WorkoutForm> createState() => _WorkoutFormState(
@@ -156,9 +155,6 @@ class _WorkoutFormState extends State<WorkoutForm> {
     widget.workout.duration = _duration;
     widget.workout.exercises = _exerciseList;
     widget.workout.icon = _icon;
-
-    widget.saveWorkout(widget.workout);
-
     FirebaseFirestore db = FirebaseFirestore.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
     db

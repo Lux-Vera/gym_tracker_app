@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/models/exercise.dart';
 import 'package:gym_tracker_app/pages/workout_form.dart';
 import 'package:gym_tracker_app/widgets/filter_popup.dart';
 import '../widgets/workout_list_item.dart';
@@ -32,9 +33,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Workout> _workoutList = [];
-  SortingOption _sorting = SortingOption.sortOnDateRecents;
-  List<String> _selectedFilters = [];
   List<Widget> _pages = [
     WorkoutListPage(),
     MyExercisesPage(),
@@ -47,129 +45,48 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).push(
       new MaterialPageRoute(
         builder: (BuildContext context) => new WorkoutForm(
-            workout:
-                Workout(title: "Test", dateTime: DateTime.now(), exercises: []),
-            saveWorkout: _addWorkout),
+          workout:
+              Workout(title: "Test", dateTime: DateTime.now(), exercises: []),
+        ),
       ),
     );
   }
 
-  void _sortOnDateOldest() {
-    setState(() {
-      _workoutList.sortBy(((a) => a.dateTime));
-    });
+  void _createExercise() {
+    // Navigator.of(context).push(
+    //   new MaterialPageRoute(
+    //     builder: (BuildContext context) => new ExerciseForm(
+    //       exercise: Exercise(name: ""),
+    //     ),
+    //   ),
+    // );
   }
 
-  void _sortOnDateRecents() {
-    _sortOnDateOldest();
-    setState(() {
-      _workoutList = _workoutList.reversed.toList();
-    });
-  }
-
-  void _sortOnDuration() {
-    setState(() {
-      _workoutList.sortBy((e) => e.duration ?? Duration());
-    });
-  }
-
-  void _sortOnDurationReverse() {
-    _sortOnDuration();
-    setState(() {
-      _workoutList = _workoutList.reversed.toList();
-    });
-  }
-
-  void _addWorkout(Workout workout) {
-    setState(() {
-      _workoutList.add(workout);
-      _sortOnDateRecents();
-    });
-  }
-
-  void handleSortRequest(SortingOption value) {
-    setState(() {
-      _sorting = value;
-    });
-    switch (value) {
-      case SortingOption.sortOnDateOldest:
-        _sortOnDateOldest();
+  void _actionButtonAction() {
+    switch (_currentPageIndex) {
+      case 0:
+        _createWorkout();
         break;
-      case SortingOption.sortOnDateRecents:
-        _sortOnDateRecents();
+      case 1:
+        _createExercise();
         break;
-
-      case SortingOption.sortOnDuration:
-        _sortOnDuration();
+      case 2:
         break;
-
-      case SortingOption.sortOnDurationReverse:
-        _sortOnDurationReverse();
+      case 3:
         break;
+      default:
+        throw ErrorDescription('_currentPageIndex invalid value');
     }
-  }
-
-  void _toggleFilter(FilterOption option) {
-    setState(() {
-      if (_selectedFilters.contains(option.toString())) {
-        _selectedFilters.remove(option.toString());
-      } else {
-        _selectedFilters.add(option.toString());
-      }
-    });
-  }
-
-  void _showFilterPopup(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => FilterPopup(
-        selectedFilters: _selectedFilters,
-        onFilterSelected: _toggleFilter,
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80,
-        centerTitle: true,
-        title: Text(
-          widget.title,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.filter_alt),
-            onPressed: () {
-              _showFilterPopup(context);
-            },
-          ),
-          PopupMenuButton<SortingOption>(
-            tooltip: 'Sort',
-            position: PopupMenuPosition.under,
-            offset: Offset(0, 0),
-            icon: Icon(
-              Icons.sort,
-            ),
-            onSelected: handleSortRequest,
-            initialValue: _sorting,
-            itemBuilder: (BuildContext context) {
-              return sortingOptionsMap.keys.map((SortingOption option) {
-                return PopupMenuItem<SortingOption>(
-                  value: option,
-                  child: Text(sortingOptionsMap[option]!),
-                );
-              }).toList();
-            },
-          ),
-        ],
-      ),
+      extendBody: true,
       body: _pages.elementAt(_currentPageIndex),
       bottomNavigationBar: BottomNavBar(focusButtonIndex: _currentPageIndex),
-      floatingActionButton:
-          CustomFloatingActionButton(icon: Icons.add, action: _createWorkout),
+      floatingActionButton: CustomFloatingActionButton(
+          icon: Icons.add, action: _actionButtonAction),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }

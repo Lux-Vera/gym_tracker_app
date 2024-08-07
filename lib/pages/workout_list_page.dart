@@ -14,6 +14,8 @@ enum SortingOption {
   sortOnDurationReverse
 }
 
+enum SortingFields { dateTime, duration }
+
 const Map<SortingOption, String> sortingOptionsMap = {
   SortingOption.sortOnDateRecents: 'Recents first',
   SortingOption.sortOnDateOldest: 'Oldest first',
@@ -32,72 +34,51 @@ class WorkoutListPage extends StatefulWidget {
 class _WorkoutListPageState extends State<WorkoutListPage> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  List<Workout> _workoutList = [];
-  SortingOption _sorting = SortingOption.sortOnDateRecents;
+  SortingOption _sortingOption = SortingOption.sortOnDateRecents;
+  SortingFields _sortingField = SortingFields.dateTime;
+  bool _sortDecending = true;
   List<String> _selectedFilters = [];
 
   void _createWorkout() {
     Navigator.of(context).push(
       new MaterialPageRoute(
         builder: (BuildContext context) => new WorkoutForm(
-            workout:
-                Workout(title: "Test", dateTime: DateTime.now(), exercises: []),
-            saveWorkout: _addWorkout),
+            workout: Workout(
+                title: "Test", dateTime: DateTime.now(), exercises: [])),
       ),
     );
   }
 
-  void _sortOnDateOldest() {
-    setState(() {
-      _workoutList.sortBy(((a) => a.dateTime));
-    });
-  }
-
-  void _sortOnDateRecents() {
-    _sortOnDateOldest();
-    setState(() {
-      _workoutList = _workoutList.reversed.toList();
-    });
-  }
-
-  void _sortOnDuration() {
-    setState(() {
-      _workoutList.sortBy((e) => e.duration ?? Duration());
-    });
-  }
-
-  void _sortOnDurationReverse() {
-    _sortOnDuration();
-    setState(() {
-      _workoutList = _workoutList.reversed.toList();
-    });
-  }
-
-  void _addWorkout(Workout workout) {
-    setState(() {
-      _workoutList.add(workout);
-      _sortOnDateRecents();
-    });
-  }
-
   void handleSortRequest(SortingOption value) {
     setState(() {
-      _sorting = value;
+      _sortingOption = value;
     });
     switch (value) {
       case SortingOption.sortOnDateOldest:
-        _sortOnDateOldest();
+        setState(() {
+          _sortingField = SortingFields.dateTime;
+          _sortDecending = false;
+        });
         break;
       case SortingOption.sortOnDateRecents:
-        _sortOnDateRecents();
+        setState(() {
+          _sortingField = SortingFields.dateTime;
+          _sortDecending = true;
+        });
         break;
 
       case SortingOption.sortOnDuration:
-        _sortOnDuration();
+        setState(() {
+          _sortingField = SortingFields.duration;
+          _sortDecending = false;
+        });
         break;
 
       case SortingOption.sortOnDurationReverse:
-        _sortOnDurationReverse();
+        setState(() {
+          _sortingField = SortingFields.duration;
+          _sortDecending = true;
+        });
         break;
     }
   }
@@ -124,43 +105,78 @@ class _WorkoutListPageState extends State<WorkoutListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: StreamBuilder(
-        stream: db
-            .collection('users')
-            .doc(auth.currentUser!.uid)
-            .collection("workouts")
-            .withConverter(
-                fromFirestore: Workout.fromFirestore,
-                toFirestore: (Workout workout, options) =>
-                    workout.toFirestore())
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            print('no data');
-            return CircularProgressIndicator();
-          }
-
-          _workoutList = snapshot.data!.docs.map((e) => e.data()).toList();
-
-          return ListView.separated(
-            physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) {
-              // Get the data from the snapshot
-              var data = snapshot.data!.docs[index];
-              if (_selectedFilters.isEmpty) {
-                return WorkoutListItem(
-                    key: Key(data['title']), workout: data.data());
-              } else
-                return SizedBox.shrink();
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 80,
+        centerTitle: true,
+        title: Text(
+          widget.title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.filter_alt),
+            onPressed: () {
+              _showFilterPopup(context);
             },
-            separatorBuilder: (context, index) => SizedBox(
-              height: 6,
+          ),
+          PopupMenuButton<SortingOption>(
+            tooltip: 'Sort',
+            position: PopupMenuPosition.under,
+            offset: Offset(0, 0),
+            icon: Icon(
+              Icons.sort,
             ),
-          );
-        },
+            onSelected: handleSortRequest,
+            initialValue: _sortingOption,
+            itemBuilder: (BuildContext context) {
+              return sortingOptionsMap.keys.map((SortingOption option) {
+                return PopupMenuItem<SortingOption>(
+                  value: option,
+                  child: Text(sortingOptionsMap[option]!),
+                );
+              }).toList();
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: StreamBuilder(
+          stream: db
+              .collection('users')
+              .doc(auth.currentUser!.uid)
+              .collection("workouts")
+              .withConverter(
+                  fromFirestore: Workout.fromFirestore,
+                  toFirestore: (Workout workout, options) =>
+                      workout.toFirestore())
+              .orderBy(_sortingField.name, descending: _sortDecending)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              print('no data');
+              return CircularProgressIndicator();
+            }
+
+            return ListView.separated(
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                // Get the data from the snapshot
+                var data = snapshot.data!.docs[index];
+                if (_selectedFilters.isEmpty) {
+                  return WorkoutListItem(
+                      key: Key(data['title']), workout: data.data());
+                } else
+                  return SizedBox.shrink();
+              },
+              separatorBuilder: (context, index) => SizedBox(
+                height: 6,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
