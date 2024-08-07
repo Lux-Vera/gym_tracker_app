@@ -29,8 +29,33 @@ class ExercisePage extends StatelessWidget {
                   fontWeight: FontWeight.w700),
             ),
             SizedBox(
-              height: 8,
+              height: 16,
             ),
+            Row(children: [
+              Text(
+                "Goal: ",
+                style: GlobalThemeData.lightTextStyle
+                    .merge(GlobalThemeData.textStyleSize24),
+              ),
+              Text(
+                '${exercise.goal ?? '-'}',
+                style: GlobalThemeData.lightTextStyle
+                    .merge(GlobalThemeData.textStyleSize24),
+              )
+            ]),
+            Row(children: [
+              Text(
+                "Pb: ",
+                style: GlobalThemeData.lightTextStyle
+                    .merge(GlobalThemeData.textStyleSize24),
+              ),
+              Text(
+                '${exercise.pb ?? '-'}',
+                style: GlobalThemeData.lightTextStyle
+                    .merge(GlobalThemeData.textStyleSize24),
+              )
+            ]),
+            Divider(),
           ],
         ),
       ),

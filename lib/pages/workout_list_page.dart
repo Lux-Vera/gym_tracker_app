@@ -39,16 +39,6 @@ class _WorkoutListPageState extends State<WorkoutListPage> {
   bool _sortDecending = true;
   List<String> _selectedFilters = [];
 
-  void _createWorkout() {
-    Navigator.of(context).push(
-      new MaterialPageRoute(
-        builder: (BuildContext context) => new WorkoutForm(
-            workout: Workout(
-                title: "Test", dateTime: DateTime.now(), exercises: [])),
-      ),
-    );
-  }
-
   void handleSortRequest(SortingOption value) {
     setState(() {
       _sortingOption = value;
@@ -165,9 +155,10 @@ class _WorkoutListPageState extends State<WorkoutListPage> {
               itemBuilder: (context, index) {
                 // Get the data from the snapshot
                 var data = snapshot.data!.docs[index];
+                Workout w = data.data();
+                w.doc_id = data.id;
                 if (_selectedFilters.isEmpty) {
-                  return WorkoutListItem(
-                      key: Key(data['title']), workout: data.data());
+                  return WorkoutListItem(key: Key(data['title']), workout: w);
                 } else
                   return SizedBox.shrink();
               },

@@ -15,29 +15,53 @@ import 'package:firebase_auth/firebase_auth.dart';
 class WorkoutForm extends StatefulWidget {
   final Workout workout;
 
-  const WorkoutForm({super.key, required this.workout});
+  const WorkoutForm({
+    super.key,
+    required this.workout,
+  });
 
   @override
-  State<WorkoutForm> createState() => _WorkoutFormState(
-      workout.dateTime, workout.duration, workout.icon, workout.exercises);
+  State<WorkoutForm> createState() => _WorkoutFormState();
 }
 
 // Define a corresponding State class.
 // This class holds the data related to the Form.
 class _WorkoutFormState extends State<WorkoutForm> {
+  String? _docId;
+
   Feeling? _workoutFeeling;
-  DateTime _pickedDate;
+  late DateTime _pickedDate;
   Duration? _duration;
-  IconData _icon;
-  List<ExerciseEntry> _exerciseList;
+  late IconData _icon;
+  late List<ExerciseEntry> _exerciseList;
 
-  final workoutTitleController = TextEditingController();
-  final workoutNotesController = TextEditingController();
+  late TextEditingController workoutTitleController;
+  late TextEditingController workoutNotesController;
 
-  _WorkoutFormState(
-      this._pickedDate, this._duration, this._icon, this._exerciseList);
+  late List<bool> _selectedButtons;
 
-  List<bool> _selectedButtons = [false, false, false, false];
+  @override
+  void initState() {
+    super.initState();
+    workoutTitleController =
+        new TextEditingController(text: widget.workout.title);
+    workoutNotesController =
+        new TextEditingController(text: widget.workout.notes);
+    this._pickedDate = widget.workout.dateTime;
+    this._duration = widget.workout.duration;
+    this._icon = widget.workout.icon;
+    this._exerciseList = widget.workout.exercises;
+    this._workoutFeeling = widget.workout.feeling;
+    this._docId = widget.workout.doc_id;
+
+    _selectedButtons = [
+      _workoutFeeling == Feeling.easy,
+      _workoutFeeling == Feeling.medium,
+      _workoutFeeling == Feeling.challenging,
+      _workoutFeeling == Feeling.dead
+    ];
+  }
+
   List<IconData> _workoutIcons = [
     Icons.directions_run,
     Icons.directions_bike,
@@ -157,16 +181,26 @@ class _WorkoutFormState extends State<WorkoutForm> {
     widget.workout.icon = _icon;
     FirebaseFirestore db = FirebaseFirestore.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
-    db
+    CollectionReference<Workout> collection = db
         .collection('users')
         .doc(auth.currentUser!.uid)
         .collection("workouts")
         .withConverter(
             fromFirestore: Workout.fromFirestore,
-            toFirestore: (Workout workout, options) => workout.toFirestore())
-        .add(widget.workout)
-        .then((_) => {print("workout added")})
-        .catchError((e) => {print('error adding workout: $e')});
+            toFirestore: (Workout workout, options) => workout.toFirestore());
+
+    if (_docId != null) {
+      collection
+          .doc(_docId)
+          .set(widget.workout)
+          .then((_) => {print("workout uppdated")})
+          .catchError((e) => {print('error uppdating workout: $e')});
+    } else {
+      collection
+          .add(widget.workout)
+          .then((_) => {print("workout added")})
+          .catchError((e) => {print('error adding workout: $e')});
+    }
 
     Navigator.of(context).push(
       new MaterialPageRoute(

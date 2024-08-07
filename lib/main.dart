@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import './models/exercise.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
@@ -46,6 +47,66 @@ void main() async {
       //   print("collection created");
       // }).catchError((e) {
       //   print('an error occured $e');
+      // });
+
+      // DEBUG add bunch of dummy exercises
+      // List<Exercise> dummyExerciseList = [
+      //   Exercise(
+      //       name: 'Dips',
+      //       targets: [Targets.chest, Targets.triceps, Targets.strength],
+      //       goal: 10,
+      //       pb: 1),
+      //   Exercise(
+      //       name: 'Push ups',
+      //       targets: [
+      //         Targets.chest,
+      //         Targets.triceps,
+      //         Targets.core,
+      //         Targets.strength
+      //       ],
+      //       goal: 10,
+      //       pb: 5),
+      //   Exercise(
+      //       name: 'Pistol Squats',
+      //       targets: [
+      //         Targets.hamstrings,
+      //         Targets.strength,
+      //         Targets.flexibility
+      //       ],
+      //       goal: 1,
+      //       pb: 0),
+      //   Exercise(name: 'Sit ups', targets: [Targets.core, Targets.strength]),
+      //   Exercise(
+      //       name: 'Box Jumps', targets: [Targets.cardio, Targets.hamstrings]),
+      //   Exercise(
+      //       name: 'Pull ups',
+      //       targets: [Targets.back, Targets.triceps, Targets.strength],
+      //       goal: 1,
+      //       pb: 0),
+      //   Exercise(
+      //       name: 'Chin ups',
+      //       targets: [Targets.back, Targets.biceps, Targets.strength],
+      //       goal: 1,
+      //       pb: 0),
+      //   Exercise(
+      //       name: 'Leg lifts',
+      //       targets: [Targets.core, Targets.strength],
+      //       pb: 20),
+      // ];
+
+      // dummyExerciseList.forEach((element) {
+      //   docRef
+      //       .collection("exercises")
+      //       .withConverter(
+      //           fromFirestore: Exercise.fromFirestore,
+      //           toFirestore: (Exercise exercise, options) =>
+      //               exercise.toFirestore())
+      //       .add(element)
+      //       .then((_) {
+      //     print("exercise created");
+      //   }).catchError((e) {
+      //     print('an error occured $e');
+      //   });
       // });
     }
   });

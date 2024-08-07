@@ -4,6 +4,7 @@ import 'exercise.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Workout {
+  String? doc_id;
   String title;
   String? notes;
   Feeling? feeling;
@@ -20,7 +21,8 @@ class Workout {
       this.duration,
       this.icon = Icons.directions_run,
       this.notes,
-      this.feeling});
+      this.feeling,
+      this.doc_id});
 
   factory Workout.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,

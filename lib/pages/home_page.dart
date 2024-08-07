@@ -36,8 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).push(
       new MaterialPageRoute(
         builder: (BuildContext context) => new WorkoutForm(
-          workout:
-              Workout(title: "Test", dateTime: DateTime.now(), exercises: []),
+          workout: Workout(title: "", dateTime: DateTime.now(), exercises: []),
         ),
       ),
     );
