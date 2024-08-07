@@ -6,7 +6,7 @@ A new Flutter project aiming tro create a gym tracker app.
 
 - [x] Workout list functionality
 - [ ] Filter workout list
-- [ ] Sort workout list
+- [x] Sort workout list
 - [ ] Exercise list functionality
 - [ ] Filter exercise list
 - [ ] Sort exercise list
@@ -23,8 +23,8 @@ A new Flutter project aiming tro create a gym tracker app.
   - [x] Set workout icon
   - [x] Set workout notes
   - [x] Set workout feeling
-  - [ ] Add workout exercise
-  - [ ] Remove workout exercise
+  - [x] Add workout exercise
+  - [x] Remove workout exercise
   - [ ] Edit workout exercise
   - [ ] Delete workout
   - [ ] Edit workout
@@ -33,7 +33,7 @@ A new Flutter project aiming tro create a gym tracker app.
   - [x] Display title
   - [x] Display notes
   - [x] Display feeling
-  - [ ] Display Exercises
+  - [x] Display Exercises
 - [x] Design main theme
 - [ ] Design high contrast theme
 - [ ] Design dark theme

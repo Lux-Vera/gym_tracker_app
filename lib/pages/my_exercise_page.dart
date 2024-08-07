@@ -15,7 +15,7 @@ class _MyExercisesPageState extends State<MyExercisesPage> {
   void _addExercise() {
     setState(() {
       _exerciseList
-          .add(Exercise("Exercise name")); //TODO: Replace with user input
+          .add(Exercise(name: "Exercise name")); //TODO: Replace with user input
     });
   }
 

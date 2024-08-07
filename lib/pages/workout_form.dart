@@ -9,6 +9,8 @@ import '../models/workout.dart';
 import '../enums/feeling.dart';
 import '../widgets/feeling-button.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class WorkoutForm extends StatefulWidget {
   final Workout workout;
@@ -52,11 +54,13 @@ class _WorkoutFormState extends State<WorkoutForm> {
   ];
 
   List<Exercise> _dummyExerciseList = [
-    Exercise('Dips',
+    Exercise(
+        name: 'Dips',
         targets: [Targets.chest, Targets.triceps, Targets.strength],
         goal: 10,
         pb: 1),
-    Exercise('Push ups',
+    Exercise(
+        name: 'Push ups',
         targets: [
           Targets.chest,
           Targets.triceps,
@@ -65,21 +69,25 @@ class _WorkoutFormState extends State<WorkoutForm> {
         ],
         goal: 10,
         pb: 5),
-    Exercise('Pistol Squats',
+    Exercise(
+        name: 'Pistol Squats',
         targets: [Targets.hamstrings, Targets.strength, Targets.flexibility],
         goal: 1,
         pb: 0),
-    Exercise('Sit ups', targets: [Targets.core, Targets.strength]),
-    Exercise('Box Jumps', targets: [Targets.cardio, Targets.hamstrings]),
-    Exercise('Pull ups',
+    Exercise(name: 'Sit ups', targets: [Targets.core, Targets.strength]),
+    Exercise(name: 'Box Jumps', targets: [Targets.cardio, Targets.hamstrings]),
+    Exercise(
+        name: 'Pull ups',
         targets: [Targets.back, Targets.triceps, Targets.strength],
         goal: 1,
         pb: 0),
-    Exercise('Chin ups',
+    Exercise(
+        name: 'Chin ups',
         targets: [Targets.back, Targets.biceps, Targets.strength],
         goal: 1,
         pb: 0),
-    Exercise('Leg lifts', targets: [Targets.core, Targets.strength], pb: 20),
+    Exercise(
+        name: 'Leg lifts', targets: [Targets.core, Targets.strength], pb: 20),
   ];
 
   /* Set States */
@@ -151,6 +159,19 @@ class _WorkoutFormState extends State<WorkoutForm> {
 
     widget.saveWorkout(widget.workout);
 
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    db
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .collection("workouts")
+        .withConverter(
+            fromFirestore: Workout.fromFirestore,
+            toFirestore: (Workout workout, options) => workout.toFirestore())
+        .add(widget.workout)
+        .then((_) => {print("workout added")})
+        .catchError((e) => {print('error adding workout: $e')});
+
     Navigator.of(context).push(
       new MaterialPageRoute(
         builder: (BuildContext context) => new WorkoutPage(
@@ -215,7 +236,8 @@ class _WorkoutFormState extends State<WorkoutForm> {
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 Exercise exercise = _dummyExerciseList[index];
-                final ExerciseEntry entry = ExerciseEntry(exercise, []);
+                final ExerciseEntry entry =
+                    ExerciseEntry(exercise: exercise, workoutSets: []);
                 return SelectableExerciseListItem(
                     exercise: exercise,
                     action: (bool isSelected) => {

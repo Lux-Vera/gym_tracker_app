@@ -3,11 +3,9 @@ import 'package:gym_tracker_app/pages/workout_form.dart';
 import 'package:gym_tracker_app/widgets/filter_popup.dart';
 import '../widgets/workout_list_item.dart';
 import '../models/workout.dart';
-import '../widgets/bottom-nav-bar.dart';
-import '../widgets/custom-floating-action-button.dart';
 import 'package:collection/collection.dart';
-import 'workout_list_page.dart';
-import 'my_exercise_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 enum SortingOption {
   sortOnDateRecents,
@@ -23,25 +21,20 @@ const Map<SortingOption, String> sortingOptionsMap = {
   SortingOption.sortOnDurationReverse: 'Duration decending'
 };
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key}) : super(key: key);
+class WorkoutListPage extends StatefulWidget {
+  WorkoutListPage({Key? key}) : super(key: key);
   final String title = "Workouts";
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _WorkoutListPageState createState() => _WorkoutListPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _WorkoutListPageState extends State<WorkoutListPage> {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
   List<Workout> _workoutList = [];
   SortingOption _sorting = SortingOption.sortOnDateRecents;
   List<String> _selectedFilters = [];
-  List<Widget> _pages = [
-    WorkoutListPage(),
-    MyExercisesPage(),
-    WorkoutListPage(),
-    WorkoutListPage()
-  ];
-  int _currentPageIndex = 0;
 
   void _createWorkout() {
     Navigator.of(context).push(
@@ -131,46 +124,44 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80,
-        centerTitle: true,
-        title: Text(
-          widget.title,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.filter_alt),
-            onPressed: () {
-              _showFilterPopup(context);
+    return Center(
+      child: StreamBuilder(
+        stream: db
+            .collection('users')
+            .doc(auth.currentUser!.uid)
+            .collection("workouts")
+            .withConverter(
+                fromFirestore: Workout.fromFirestore,
+                toFirestore: (Workout workout, options) =>
+                    workout.toFirestore())
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            print('no data');
+            return CircularProgressIndicator();
+          }
+
+          _workoutList = snapshot.data!.docs.map((e) => e.data()).toList();
+
+          return ListView.separated(
+            physics: BouncingScrollPhysics(),
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              // Get the data from the snapshot
+              var data = snapshot.data!.docs[index];
+              if (_selectedFilters.isEmpty) {
+                return WorkoutListItem(
+                    key: Key(data['title']), workout: data.data());
+              } else
+                return SizedBox.shrink();
             },
-          ),
-          PopupMenuButton<SortingOption>(
-            tooltip: 'Sort',
-            position: PopupMenuPosition.under,
-            offset: Offset(0, 0),
-            icon: Icon(
-              Icons.sort,
+            separatorBuilder: (context, index) => SizedBox(
+              height: 6,
             ),
-            onSelected: handleSortRequest,
-            initialValue: _sorting,
-            itemBuilder: (BuildContext context) {
-              return sortingOptionsMap.keys.map((SortingOption option) {
-                return PopupMenuItem<SortingOption>(
-                  value: option,
-                  child: Text(sortingOptionsMap[option]!),
-                );
-              }).toList();
-            },
-          ),
-        ],
+          );
+        },
       ),
-      body: _pages.elementAt(_currentPageIndex),
-      bottomNavigationBar: BottomNavBar(focusButtonIndex: _currentPageIndex),
-      floatingActionButton:
-          CustomFloatingActionButton(icon: Icons.add, action: _createWorkout),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }
