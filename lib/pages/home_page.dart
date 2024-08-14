@@ -22,6 +22,13 @@ class _MyHomePageState extends State<MyHomePage> {
     StatisticsPage(),
     UserPage()
   ];
+
+  List<String> _actionButtonTooltips = [
+    "Add workout",
+    "Add exercise",
+    "...",
+    "..."
+  ]; //TODO: tooltips
   int _currentPageIndex = 0;
 
   void _setCurrentPageIndex(int i) {
@@ -79,7 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
         setNewIndex: _setCurrentPageIndex,
       ),
       floatingActionButton: CustomFloatingActionButton(
-          icon: Icons.add, action: _actionButtonAction),
+          icon: Icons.add,
+          action: _actionButtonAction,
+          tooltip: _actionButtonTooltips[_currentPageIndex]),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
