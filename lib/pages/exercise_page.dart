@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/models/exercise.dart';
+import 'package:gym_tracker_app/models/exercise_data.dart';
 import '../theme.dart';
 
 class ExercisePage extends StatelessWidget {
-  final Exercise exercise;
-  const ExercisePage({Key? key, required this.exercise}) : super(key: key);
+  final ExerciseData exerciseData;
+  const ExercisePage({Key? key, required this.exerciseData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class ExercisePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              exercise.name,
+              exerciseData.exercise.name,
               style: TextStyle(
                   color: accentBlue,
                   fontSize: 36.0,
@@ -38,7 +38,7 @@ class ExercisePage extends StatelessWidget {
                     .merge(GlobalThemeData.textStyleSize24),
               ),
               Text(
-                '${exercise.goal ?? '-'}',
+                '${exerciseData.goal ?? '-'}',
                 style: GlobalThemeData.lightTextStyle
                     .merge(GlobalThemeData.textStyleSize24),
               )
@@ -50,7 +50,7 @@ class ExercisePage extends StatelessWidget {
                     .merge(GlobalThemeData.textStyleSize24),
               ),
               Text(
-                '${exercise.pb ?? '-'}',
+                '${exerciseData.pb ?? '-'}',
                 style: GlobalThemeData.lightTextStyle
                     .merge(GlobalThemeData.textStyleSize24),
               )

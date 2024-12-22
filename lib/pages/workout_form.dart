@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/models/exercise.dart';
+import 'package:gym_tracker_app/models/exercise_data.dart';
 import 'package:gym_tracker_app/pages/workout_page.dart';
 import 'package:gym_tracker_app/theme.dart';
 import 'package:gym_tracker_app/widgets/selectable_exercise_list_item.dart';
 import 'package:gym_tracker_app/widgets/exercise_entry_toggle_card.dart';
 import 'package:gym_tracker_app/widgets/one-choice-toggle-buttons.dart';
+import '../enums/targets.dart';
 import '../models/workout.dart';
 import '../enums/feeling.dart';
+import '../models/exercise_entry.dart';
 import '../widgets/feeling-button.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../dummy.dart';
 
 class WorkoutForm extends StatefulWidget {
   final Workout workout;
@@ -52,7 +56,7 @@ class _WorkoutFormState extends State<WorkoutForm> {
     this._icon = widget.workout.icon;
     this._exerciseList = widget.workout.exercises;
     this._workoutFeeling = widget.workout.feeling;
-    this._docId = widget.workout.doc_id;
+    this._docId = widget.workout.docId;
 
     _selectedButtons = [
       _workoutFeeling == Feeling.easy,
@@ -74,43 +78,6 @@ class _WorkoutFormState extends State<WorkoutForm> {
     Icons.sports_gymnastics,
     Icons.sports_kabaddi,
     Icons.nordic_walking,
-  ];
-
-  List<Exercise> _dummyExerciseList = [
-    Exercise(
-        name: 'Dips',
-        targets: [Targets.chest, Targets.triceps, Targets.strength],
-        goal: 10,
-        pb: 1),
-    Exercise(
-        name: 'Push ups',
-        targets: [
-          Targets.chest,
-          Targets.triceps,
-          Targets.core,
-          Targets.strength
-        ],
-        goal: 10,
-        pb: 5),
-    Exercise(
-        name: 'Pistol Squats',
-        targets: [Targets.hamstrings, Targets.strength, Targets.flexibility],
-        goal: 1,
-        pb: 0),
-    Exercise(name: 'Sit ups', targets: [Targets.core, Targets.strength]),
-    Exercise(name: 'Box Jumps', targets: [Targets.cardio, Targets.hamstrings]),
-    Exercise(
-        name: 'Pull ups',
-        targets: [Targets.back, Targets.triceps, Targets.strength],
-        goal: 1,
-        pb: 0),
-    Exercise(
-        name: 'Chin ups',
-        targets: [Targets.back, Targets.biceps, Targets.strength],
-        goal: 1,
-        pb: 0),
-    Exercise(
-        name: 'Leg lifts', targets: [Targets.core, Targets.strength], pb: 20),
   ];
 
   /* Set States */
@@ -265,11 +232,11 @@ class _WorkoutFormState extends State<WorkoutForm> {
           child: ListView.separated(
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                Exercise exercise = _dummyExerciseList[index];
+                ExerciseData exerciseData = dummyExerciseList[index];
                 final ExerciseEntry entry =
-                    ExerciseEntry(exercise: exercise, workoutSets: []);
+                    ExerciseEntry(exerciseData: exerciseData, workoutSets: []);
                 return SelectableExerciseListItem(
-                    exercise: exercise,
+                    exerciseData: exerciseData,
                     action: (bool isSelected) => {
                           if (isSelected)
                             {
@@ -278,12 +245,13 @@ class _WorkoutFormState extends State<WorkoutForm> {
                               )
                             }
                           else
-                            setState(() => exerciseEntries.removeWhere(
-                                (e) => e.exercise.name == exercise.name))
+                            setState(() => exerciseEntries.removeWhere((e) =>
+                                e.exerciseData.exercise.name ==
+                                exerciseData.exercise.name))
                         });
               },
               separatorBuilder: ((context, index) => SizedBox(height: 8)),
-              itemCount: _dummyExerciseList.length),
+              itemCount: dummyExerciseList.length),
         ),
         backgroundColor: lightBlue,
         actions: [

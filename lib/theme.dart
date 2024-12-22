@@ -35,7 +35,7 @@ class GlobalThemeData {
         appBarTheme: AppBarTheme(color: lightBlue, foregroundColor: accentBlue),
         canvasColor: lightBlue,
         scaffoldBackgroundColor: lightBlue,
-        bottomAppBarColor: lightBlue,
+        bottomAppBarTheme: BottomAppBarTheme(color: lightBlue),
         disabledColor: disabledBlue,
         popupMenuTheme: PopupMenuThemeData(textStyle: lightTextStyle),
         dialogTheme: DialogTheme(

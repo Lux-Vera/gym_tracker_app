@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../models/exercise.dart';
+import '../models/exercise_data.dart';
 import '../theme.dart';
 
 class SelectableExerciseListItem extends StatefulWidget {
-  final Exercise exercise;
+  final ExerciseData exerciseData;
   final Function? action;
 
   const SelectableExerciseListItem(
-      {Key? key, required this.exercise, this.action})
+      {Key? key, required this.exerciseData, this.action})
       : super(key: key);
 
   @override
@@ -38,7 +38,7 @@ class _SelectableExerciseListItemState
               padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
               color: isSelected ? accentBlue : white,
               child: Text(
-                widget.exercise.name,
+                widget.exerciseData.exercise.name,
                 style: TextStyle(color: isSelected ? lightBlue : accentBlue),
               ),
             ),

@@ -59,7 +59,7 @@ class WorkoutPage extends StatelessWidget {
                                             toFirestore:
                                                 (Workout workout, options) =>
                                                     workout.toFirestore())
-                                        .doc(workout.doc_id)
+                                        .doc(workout.docId)
                                         .delete()
                                         .then((value) => {
                                               print("workout deleted"),

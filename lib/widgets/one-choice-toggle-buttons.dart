@@ -34,6 +34,7 @@ class _OneChoiceToggleButtonsState extends State<OneChoiceToggleButtons> {
       selectedColor: lightBlue,
       fillColor: accentBlue,
       color: accentBlue,
+      constraints: BoxConstraints(minWidth: 0),
       onPressed: (int index) {
         setState(() {
           widget.action!(widget.selectedButtons[index]

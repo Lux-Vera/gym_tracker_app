@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/pages/workout_form.dart';
 import 'package:gym_tracker_app/widgets/filter_popup.dart';
 import '../widgets/workout_list_item.dart';
 import '../models/workout.dart';
-import 'package:collection/collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../models/filter_options.dart';
 
 enum SortingOption {
   sortOnDateRecents,
@@ -37,7 +36,7 @@ class _WorkoutListPageState extends State<WorkoutListPage> {
   SortingOption _sortingOption = SortingOption.sortOnDateRecents;
   SortingFields _sortingField = SortingFields.dateTime;
   bool _sortDecending = true;
-  List<String> _selectedFilters = [];
+  FilterOptions _filter = FilterOptions();
 
   void handleSortRequest(SortingOption value) {
     setState(() {
@@ -73,21 +72,15 @@ class _WorkoutListPageState extends State<WorkoutListPage> {
     }
   }
 
-  void _toggleFilter(FilterOption option) {
-    setState(() {
-      if (_selectedFilters.contains(option.toString())) {
-        _selectedFilters.remove(option.toString());
-      } else {
-        _selectedFilters.add(option.toString());
-      }
-    });
+  void _toggleFilter(FilterOptions filterOptions) {
+    setState(() {});
   }
 
   void _showFilterPopup(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (context) => FilterPopup(
-        selectedFilters: _selectedFilters,
+        filter: _filter,
         onFilterSelected: _toggleFilter,
       ),
     );
@@ -156,8 +149,8 @@ class _WorkoutListPageState extends State<WorkoutListPage> {
                 // Get the data from the snapshot
                 var data = snapshot.data!.docs[index];
                 Workout w = data.data();
-                w.doc_id = data.id;
-                if (_selectedFilters.isEmpty) {
+                w.docId = data.id;
+                if (_filter.noFilters()) {
                   return WorkoutListItem(key: Key(data['title']), workout: w);
                 } else
                   return SizedBox.shrink();

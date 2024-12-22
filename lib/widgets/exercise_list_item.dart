@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import '../models/exercise.dart';
+import '../models/exercise_data.dart';
 import '../theme.dart';
 import '../pages/exercise_page.dart';
 
 class ExerciseListItem extends StatelessWidget {
-  final Exercise exercise;
+  final ExerciseData exerciseData;
 
-  const ExerciseListItem({Key? key, required this.exercise}) : super(key: key);
+  const ExerciseListItem({Key? key, required this.exerciseData})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class ExerciseListItem extends StatelessWidget {
       onTap: () => Navigator.of(context).push(
         new MaterialPageRoute(
           builder: (BuildContext context) => new ExercisePage(
-            exercise: exercise,
+            exerciseData: exerciseData,
           ),
         ),
       ),
@@ -28,7 +29,7 @@ class ExerciseListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  exercise.name,
+                  exerciseData.exercise.name,
                   style: TextStyle(
                       color: accentBlue,
                       fontSize: 20.0,

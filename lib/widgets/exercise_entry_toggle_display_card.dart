@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/exercise.dart';
+import '../models/exercise_entry.dart';
 import '../theme.dart';
 
 class ExerciseEntryToggleDisplayCard extends StatefulWidget {
@@ -50,7 +50,7 @@ class _ExerciseEntryToggleDisplayCardState
                   color: lightBlue,
                 ),
                 Text(
-                  widget.exerciseEntry.exercise.name,
+                  widget.exerciseEntry.exerciseData.exercise.name,
                   style: GlobalThemeData.boldTextStyle
                       .merge(GlobalThemeData.lightTextStyleOn)
                       .merge(GlobalThemeData.textStyleSize16),

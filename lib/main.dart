@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import './models/exercise.dart';
+import 'models/exercise_data.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
@@ -31,7 +31,7 @@ void main() async {
           print(data["Name"]);
           // ...
         },
-        onError: (e) => print("Error getting document: $e"),
+        onError: (e) => print("Error getting user document: $e"),
       );
 
       // DEBUG : add dummy exercise

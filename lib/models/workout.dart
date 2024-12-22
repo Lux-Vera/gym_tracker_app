@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/enums/feeling.dart';
-import 'exercise.dart';
+import 'exercise_entry.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Workout {
-  String? doc_id;
+  String? docId;
   String title;
   String? notes;
   Feeling? feeling;
@@ -22,27 +22,50 @@ class Workout {
       this.icon = Icons.directions_run,
       this.notes,
       this.feeling,
-      this.doc_id});
+      this.docId});
 
   factory Workout.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
   ) {
     final data = snapshot.data();
-    return Workout(
-        title: data?['title'],
-        dateTime: DateTime.fromMicrosecondsSinceEpoch(data?['dateTime']),
-        exercises: List.from(data?['exercises'])
-            .map((e) => ExerciseEntry.fromMap(e))
-            .toList(),
-        duration: data?['duration'] != null
-            ? Duration(minutes: data!['duration'])
-            : null,
-        icon: IconData(data?['icon'], fontFamily: 'MaterialIcons'),
-        notes: data?['notes'],
-        feeling: data?['feeling'] != null
-            ? Feeling.values.byName(data?['feeling'])
-            : null);
+    try {
+      // final List<ExerciseEntry> exercises = List.from(data?['exercises'])
+      //     .map((e) => _fetchExerciseEntry(e) as ExerciseEntry)
+      //     .toList();
+      return Workout(
+          title: data?['title'],
+          dateTime: DateTime.fromMicrosecondsSinceEpoch(data?['dateTime']),
+          exercises: [],
+          duration: data?['duration'] != null
+              ? Duration(minutes: data!['duration'])
+              : null,
+          icon: IconData(data?['icon'], fontFamily: 'MaterialIcons'),
+          notes: data?['notes'],
+          feeling: data?['feeling'] != null
+              ? Feeling.values.byName(data?['feeling'])
+              : null);
+    } catch (e) {
+      throw Exception('An error occured fetching the exercise_entry doc: $e ');
+    }
+  }
+
+  static Future<ExerciseEntry?> _fetchExerciseEntry(
+      DocumentReference? reference) async {
+    if (reference == null) {
+      return null;
+    }
+
+    try {
+      final exerciseEntrySnapshot = await reference.get();
+      return ExerciseEntry.fromFirestore(
+          exerciseEntrySnapshot as DocumentSnapshot<Map<String, dynamic>>,
+          null);
+    } catch (e) {
+      // Handle errors
+      print('Error fetching post: $e');
+      return null;
+    }
   }
 
   Map<String, dynamic> toFirestore() {

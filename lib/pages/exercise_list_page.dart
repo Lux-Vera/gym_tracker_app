@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/models/exercise.dart';
+import 'package:gym_tracker_app/models/exercise_data.dart';
 import 'package:gym_tracker_app/widgets/filter_popup.dart';
 import '../widgets/exercise_list_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../models/filter_options.dart';
 
 enum ExerciseSortingOption { sortOnNameAscending, sortOnNameDecending }
 
@@ -29,7 +30,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
       ExerciseSortingOption.sortOnNameAscending;
   ExerciseSortingFields _sortingField = ExerciseSortingFields.name;
   bool _sortDecending = true;
-  List<String> _selectedFilters = [];
+  FilterOptions _filter = FilterOptions();
 
   void handleSortRequest(ExerciseSortingOption value) {
     setState(() {
@@ -51,21 +52,15 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
     }
   }
 
-  void _toggleFilter(FilterOption option) {
-    setState(() {
-      if (_selectedFilters.contains(option.toString())) {
-        _selectedFilters.remove(option.toString());
-      } else {
-        _selectedFilters.add(option.toString());
-      }
-    });
+  void _toggleFilter(FilterOptions filterOption) {
+    setState(() {});
   }
 
   void _showFilterPopup(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (context) => FilterPopup(
-        selectedFilters: _selectedFilters,
+        filter: _filter,
         onFilterSelected: _toggleFilter,
       ),
     );
@@ -116,8 +111,8 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
               .doc(auth.currentUser!.uid)
               .collection('exercises')
               .withConverter(
-                  fromFirestore: Exercise.fromFirestore,
-                  toFirestore: (Exercise exercise, options) =>
+                  fromFirestore: ExerciseData.fromFirestore,
+                  toFirestore: (ExerciseData exercise, options) =>
                       exercise.toFirestore())
               .orderBy(_sortingField.name, descending: _sortDecending)
               .snapshots()
@@ -134,9 +129,9 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
               itemBuilder: (context, index) {
                 // Get the data from the snapshot
                 var data = snapshot.data!.docs[index];
-                if (_selectedFilters.isEmpty) {
+                if (_filter.noFilters()) {
                   return ExerciseListItem(
-                      key: Key(data['name']), exercise: data.data());
+                      key: Key(data['name']), exerciseData: data.data());
                 } else
                   return SizedBox.shrink();
               },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gym_tracker_app/models/set.dart';
-import '../models/exercise.dart';
+import '../models/exercise_entry.dart';
 import '../theme.dart';
 
 class ExerciseEntryToggleCard extends StatefulWidget {
@@ -104,7 +104,7 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
               color: accentBlue,
             ),
             Text(
-              widget.exerciseEntry.exercise.name,
+              widget.exerciseEntry.exerciseData.exercise.name,
               style: GlobalThemeData.boldTextStyle
                   .merge(GlobalThemeData.lightTextStyle)
                   .merge(GlobalThemeData.textStyleSize16),
@@ -159,7 +159,7 @@ class _ExerciseEntryToggleCardState extends State<ExerciseEntryToggleCard> {
                       color: _isOpen ? lightBlue : accentBlue,
                     ),
                     Text(
-                      widget.exerciseEntry.exercise.name,
+                      widget.exerciseEntry.exerciseData.exercise.name,
                       style: GlobalThemeData.boldTextStyle
                           .merge(_isOpen
                               ? GlobalThemeData.lightTextStyleOn
